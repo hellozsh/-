@@ -13,6 +13,8 @@
 
 @property (nonatomic, strong) Person *p;
 
+@property (nonatomic, strong) NSThread *t;
+
 @end
 
 @implementation ViewController
@@ -25,8 +27,30 @@
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+     
+    self.t = [[NSThread alloc] initWithTarget:self.p selector:@selector(testThreadStatus) object:@100];
+    // 2:启动线程
+    [self.t start];
+    self.t.name = @"学习线程";
     
-    NSLog(@"123");
+}
+
+/*
+ 线程状态演练方法
+ */
+- (void)testThreadStatus {
+    
+    // running
+    for (int i = 0; i < 10; i++) {
+        // blocked
+        if (i == 2) {
+            sleep(1);
+        }
+        if ( i == 8) {
+            
+        }
+    }
+    [self.t cancel];
 }
 
 - (void)threadTest {
@@ -47,10 +71,14 @@
     [t start];
     t.name = @"学习线程";
     
+    
+    
     dispatch_sync(dispatch_get_global_queue(0, 0), ^{
         // __block 处理能带过来
         // block 的回调也没关系的，你
     });
+    
+    
 }
 
 

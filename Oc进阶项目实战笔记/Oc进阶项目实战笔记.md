@@ -42,3 +42,50 @@
 
 ## 多线程的原理
 
++ 多线程指的是多个线程"同时"执行[^同时]
+
++ Oc项目启动时，系统会自己开辟好几个线程，用于他的操作，我们可以给线程设置名字用于区分功能
+
+  [^同时]: 1个CPU核一次能执行的CPU命令始终为1，使用多线程的程序可以在某个线程和其他线程之间反复多次进行上下文切换，因此看上去就好像1个CPU核能够并列地执行多个线程一样
+
+### 多线程技术方案
+
+| 方案        | 简介                                                         | 语言 | 线程生命周期 | 使用频率 |
+| ----------- | ------------------------------------------------------------ | ---- | ------------ | -------- |
+| pthread     | 1.一套通用的多线程API<br/>2.适用于Unix\Linux\Windows等系统<br/>3.跨平台\可移植<br/>4.使用难度大 | C    | 程序员管理   | 几乎不用 |
+| NSThread    | 1.使用更加面向对象<br/>2.简单易用，可直接操作线程对象        | OC   | 程序员管理   | 偶尔使用 |
+| GCD         | 1.旨在替代NSThread等线程技术<br/>2.充分利用设备的多核        | C    | 自动管理     | 经常使用 |
+| NSOperation | 1.基于GCD<br/>2.比GCD多了一些更简单实用的功能<br/>3.使用更加面向对象 | OC   | 自动管理     | 经常使用 |
+
+NSThread、GCD、NSOperation底层都是用的pthread
+
+###多线程生命周期
+
+![多线程生命周期](/Users/zhousuhua/Desktop/iOS学习/笔记/所有学习笔记/Oc进阶项目实战笔记/多线程生命周期.png)
+
+### 饱和策略
+
+![饱和策略](/Users/zhousuhua/Desktop/iOS学习/笔记/所有学习笔记/Oc进阶项目实战笔记/饱和策略.png)
+
+
+
+### GCD的常用函数
+
++ GCD中有2个用来执行任务的函数
+
+  +  用同步的方式执行任务
+
+    dispatch_<font color=#FF0000 >sync</font>(dispatch_queue_t queue, dispatch_block_t block);
+
+    queue： 队列 
+
+    Block: 任务
+
+  + 用异步的方式执行任务
+
+    dispatch_<font color=#FF0000 >async</font>(dispatch_queue_t queue, dispatch_block_t block); 
+
+### 锁
+
+
+
