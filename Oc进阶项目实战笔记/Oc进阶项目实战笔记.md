@@ -1,3 +1,7 @@
+---
+typora-root-url: ../../StudyNotes
+---
+
 [TOC]
 
 # 多线程
@@ -59,15 +63,11 @@
 
 NSThread、GCD、NSOperation底层都是用的pthread
 
-###多线程生命周期
-
-![多线程生命周期](/Users/zhousuhua/Desktop/iOS学习/笔记/所有学习笔记/Oc进阶项目实战笔记/多线程生命周期.png)
+###多线程生命周期![多线程生命周期](/Oc进阶项目实战笔记/多线程生命周期.png)
 
 ### 饱和策略
 
-![饱和策略](/Users/zhousuhua/Desktop/iOS学习/笔记/所有学习笔记/Oc进阶项目实战笔记/饱和策略.png)
-
-
+![饱和策略](/Oc进阶项目实战笔记/饱和策略.png)
 
 ### GCD的常用函数
 
