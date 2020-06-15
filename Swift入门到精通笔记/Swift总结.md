@@ -388,6 +388,134 @@ print(number) // 20，
 4. movq  &0x14,(%rdi)  //（将16进制的14赋值给rdi所存储地址所在的空间,()找到地址指向的空间）
 5. movq  -ox30(%rbp),%rdi  //将rbp-0x30的地址所在空间的值赋值给%rdi
 
+###inout的本质
+
+1. inout本质还是引用传递，传递的是地址值，只是是谁的地址值要看情况
+2. 结构体的地址值就是它第一个属性的地址值
+
+```swift
+struct Shape {
+    var width: Int
+    var side: Int {
+    
+        willSet {
+            print("willSet",newValue)
+        }
+        didSet {
+            print("didSet",oldValue,side)
+        }
+    }
+    var girth: Int {
+        set {
+            width = newValue / side
+            print("setGirth",newValue)
+        }
+        get {
+            print("getGirth")
+            return width * side
+        }
+    }
+    func show() {
+        print("width=\(width), side=\(side), girth = \(girth)")
+    }
+}
+
+func test(_ num: inout Int) {
+    
+    num = 20
+}
+var s = Shape(width:10, side:4)
+test(&s.width) 
+s.show() // getGirth    width=20, side=4, girth = 80
+// 主要汇编
+/*
+    0x10000103c <+108>: leaq   0x71b5(%rip), %rdi        ; SwiftTest.s : SwiftTest.Shape
+    0x100001043 <+115>: callq  0x100001d90               ; SwiftTest.test(inout Swift.Int) -> () at main.swift:41
+*/
+/*
+     0x71b5(%rip)是一个全局地址，从注释可看出是s，将s这个地址值作为参数传递给了test函数，(因为结构体的地址值就是它第一个属性的地址值) 
+*/
+
+
+print("-------------")
+test(&s.side)
+s.show()  // willSet 20      didSet 4 20      getGirth     width=20, side=20, girth = 400
+// 主要汇编
+/*
+   0x10000131d <+93>:  movq   0x6edc(%rip), %rax        ; SwiftTest.s : SwiftTest.Shape + 8
+    0x100001324 <+100>: movq   %rax, -0x28(%rbp)
+    0x100001328 <+104>: leaq   -0x28(%rbp), %rdi
+   0x10000132c <+108>: callq  0x100001d90               ; SwiftTest.test(inout Swift.Int) -> () at main.swift:41
+    0x100001331 <+113>: movq   -0x28(%rbp), %rdi
+    0x100001335 <+117>: leaq   0x6ebc(%rip), %r13        ; SwiftTest.s : SwiftTest.Shape
+    0x10000133c <+124>: callq  0x100001430               ; SwiftTest.Shape.side.setter : Swift.Int at main.swift:14
+*/
+/*
+     先调用了test，再调用了setter方法
+     movq   0x6edc(%rip), %rax： 将某个全局变量的内容赋值给rax，从后面注释可看到这个全局变量是s+8即s的第二个成员side，这句意思是将side里的内容赋值给rax，
+     movq   %rax, -0x28(%rbp): rax又赋值给了一个局部变量
+     leaq   -0x28(%rbp), %rdi： 将局部变量的地址值赋值给rdi
+     调用test修改值，改完后将这个局部变量地址的内容赋值给rdi
+     rdi又作为函数参数给了setter，
+*/
+// setter主要汇编
+/*
+    0x100001459 <+41>: movq   %rdi, -0x20(%rbp)
+    0x10000145d <+45>: movq   %r13, -0x28(%rbp)
+    0x100001461 <+49>: movq   %rax, -0x30(%rbp)
+    0x100001465 <+53>: callq  0x100001490               ; SwiftTest.Shape.side.willset : Swift.Int at main.swift:16
+    0x10000146a <+58>: movq   -0x28(%rbp), %rax
+    0x10000146e <+62>: movq   -0x20(%rbp), %rcx
+    0x100001472 <+66>: movq   %rcx, 0x8(%rax)
+    0x100001476 <+70>: movq   -0x30(%rbp), %rdi
+    0x10000147a <+74>: movq   %rax, %r13
+    0x10000147d <+77>: callq  0x1000015b0               ; SwiftTest.Shape.side.didset : Swift.Int at main.swift:19
+*/
+/*
+  setter方法里面会调用willset 
+  在willset和didset之间代码就是真正修改side内容的代码，改完之后调用didSet
+  movq   -0x28(%rbp), %rax：打印rax会发现他是s的地址值，
+  movq   -0x20(%rbp), %rcx:
+   movq   %rcx, 0x8(%rax): 打印rcx会发现是20的那个值，把这个值存储进rax的第二个成员side
+*/
+// test函数内部是不可能调用willset和didset，所以弄一个局部变量，test修改这个局部变量再调用setter真正修改side的值，能触发willSet和didSet
+
+
+print("-------------")
+test(&s.girth)
+s.show()  //  getGirth       setGirth 20       getGirth       width=5, side=4, girth = 20
+// 主要汇编
+/*
+      0x100001322 <+258>: callq  0x1000016f0               ; SwiftTest.Shape.girth.getter : Swift.Int at main.swift:30
+    0x100001327 <+263>: movq   %rax, -0x28(%rbp)
+    0x10000132b <+267>: leaq   -0x28(%rbp), %rdi
+    0x10000132f <+271>: callq  0x100001d90               ; SwiftTest.test(inout Swift.Int) -> () at main.swift:41
+    0x100001334 <+276>: movq   -0x28(%rbp), %rdi
+    0x100001338 <+280>: leaq   0x6eb9(%rip), %r13        ; SwiftTest.s : SwiftTest.Shape
+    0x10000133f <+287>: callq  0x100001840               ; SwiftTest.Shape.girth.setter : Swift.Int at main.swift:26
+*/
+/*
+  由于s.girth是计算属性，没有自己的内存地址
+  从汇编看先调用了girth.getter方法，然后调用了test，掉完test再调用了girth.setter
+  先调用setter方法，方法的返回值都存放在rax上，rax又赋值给 -0x28(%rbp)，-0x28(%rbp)是函数的栈空间，函数的栈空间返回时rbp--rsp之间，所以是当前的函数的栈空间(main函数的一个栈空间即main函数的一个局部变量) 
+  leaq   -0x28(%rbp), %rdi ： 将局部变量的地址值给rdi，说明将局部变量的地址值给了test，test方法里面会通过地址值修改内容
+  调用完test后，看到汇编 movq   -0x28(%rbp), %rdi： 将局部变量里存储的内容给rdi，注意mov和lea的区别
+  这个rdi又传给了setter方法
+
+  调用getter得到返回值，将返回值放在一个临时的空间，调用test传递的地址值就是这个临时的空间，调用完后临时的空间就被更改为新的值，改完新值后会调用计算属性girth的set方法，新的值作为newValue传递
+*/
+```
+
+####总结
+
+1. 如果实参有物理内存地址，且没有设置属性观察器
+   1. 直接将实惨的内存地址传入函数(实惨进行引用传递)
+2. 如果实参是计算属性或者设置了属性观察器
+   1. 采取了Copy In Copy Out的做法
+   2. 调用该函数时，先复制实参的值，产生副本[get]
+   3. 将副本的内存地址传入函数(副本进行引用传递),在函数内部可以修改副本的值
+   4. 函数返回后，再将副本的值覆盖实参的值[set]
+
 ##函数重载
 
 + 规则
@@ -888,7 +1016,14 @@ MemoryLayout<TestE>.alignment  // 8
 5. thread step-out、finish : 执行执行完当前函数的所有代码,返回到上一个函数(遇到断点会卡住)
 6. ![lldb常用指令](/Swift入门到精通笔记/lldb常用指令.png)
 
-# 类和结构体
+##汇编看闭包
+
+1. 汇编: xorl %ecx, %ecx  // 异或，ecx异或ecx为0，再将这个0赋值给ecx
+2. 汇编: movq %rcx, (%rax) // (%rax)指取出rax里面存的值
+3. 汇编: addq $0x10, %rdx // 将rdx的地址+0x10，再赋值给rdx
+4. 没有捕获严格意义上不算闭包
+
+# 值类型和引用类型(结构体和类)
 
 ##结构体
 
@@ -950,6 +1085,39 @@ MemoryLayout<TestE>.alignment  // 8
    4. register read rax: 获取rax的地址值
    5. 栈分配的地址先分配的更高，后分配的地址更低
    6. 内存地址格式为：0x10(%rax)，一般是堆空间
+   
+   ```swift
+   func testReferenceType() {
+      class Size {
+        var width: Int
+        var height: Int
+        init(width:Int,height:Int) {
+           self.width = width
+           self.height = height
+        }
+      }
+      var s1 = Size(width:10,height:20)
+      var s2 = s1
+      s2.width = 11
+      s2.height = 22
+   }
+      
+   对应部分汇编：
+   // 凡是__allocating_init就可以知道这个函数里面是alloc init功能
+   callq 0x100000f50  ; __allocating_init(width: ...)
+   // rax一般作为返回值使用，所以这里rax存储的是初始化后的对象
+   // -0x10(%rbp)是一个局部变量，所以它就是s1的指针变量了
+   movq  %rax,  -0x10(%rbp)
+   movq  %rax,  %rdi
+   // -0x60(%rbp)是另一个局部变量，所以它就是2的指针变量了
+   movq  %rax,  -0x60(%rbp)
+   callq 0x10005dca  ; symbol stub for: swift_retain
+   .....
+   // 将s2的地址值给rax
+   movq  -0x60(%rbp), %rax
+   // 将0xb(10位数的11) 给rax移动16个字节位置(即字节的第一个成员属性)
+   movq  $0xb, 0x10(rax)
+   ```
 
 ## 值类型
 
@@ -988,5 +1156,386 @@ func test() {
 var s1 = "Jack"
 var s2 = s1  // 如果s1和s2的值一样，那么s2的地址和s1的地址就是一样的
 s2.append（"_Rose"） // 2个不一样开始做了深拷贝，s2做深拷贝
+```
+
+##枚举、结构体、类都可以定义方法
+
+1. 一般把定义在枚举、结构体、类内部的函数，叫做方法
+2. 方法并不占用对象的内存
+3. 方法的本质就是函数
+4. 方法、函数都存放在代码段
+5. 方法中的变量在栈里
+6. 代码段放在最前面地址最小，再接着是全局变量，然后是堆空间，最后栈空间，栈空间的地址一般都特别特别大，
+
+##引用类型的赋值操作
+
+```swift
+class Size {
+    var width: Int
+    var height: Int
+    init(width: Int, height: Int) {
+        self.width = width
+        self.height = height
+    }
+}
+ 
+var s1 = Size(width: 10, height: 20)
+s1 = Size(width: 11, height: 22)
+// s1的地址值并不会变，但是s1中存的对象地址会变
+```
+
+##值类型、引用类型的let
+
+```swift
+let p = Point(x: 10, y: 20) // Point结构体值类型 // p = Point(x: 11, y: 22) // 不允许 // p.x = 33 // 不允许 // p.x = 44 // 不允许 let s = Size(width: 10, height: 20)// s = Size(width: 11, height: 22) // 不允许s.width = 33 // 允许s.height = 44 // 允许
+```
+
+# 闭包
+
+## 介绍
+
+### 闭包表达式
+
+1. swift里，可以通过func定义一个函数，也可以通过闭包表达式定义一个函数
+
+```swift
+func sum(_ v1: Int, _ v2: Int) -> Int { v1 + v2 }
+
+var fn = {
+    (v1: Int, v2: Int) -> Int in
+    return v1 + v2
+}
+//fn(10,20)
+//// 闭包格式
+//{
+//    (参数列表) -> 返回值类型 in
+//    函数体代码
+//}
+
+// 定义完直接调用
+{
+    (v1: Int, v2: Int) -> Int in
+    return v1 + v2
+}(10,20)
+```
+
+### 闭包表达式的简写
+
+```swift
+func exec(v1: Int, v2: Int, fn:(Int,Int) -> Int) {
+  print(fn(v1,v2))
+}
+// 省略1
+exec(v1: 10,v2: 20, fn{
+  (v1: Int, v2: Int) -> Int in
+  return v1+v2
+})
+// 省略2
+exec(v1: 10,v2: 20, fn{
+  v1, v2 in
+  return v1+v2
+})
+// 省略3
+exec(v1: 10,v2: 20, fn{
+  v1, v2 in v1+v2
+})
+// 省略4
+exec(v1: 10,v2: 20, fn{ $0 + $1}) // $0表示第1个参数，$1第二个参数
+// 省略5
+exec(v1: 10,v2: 20, fn{+}) // 测试这个不行
+```
+
+### 尾随闭包
+
+1. 如果将一个很长的闭包表达式作为函数的最后一个实惨，使用尾随闭包可以增强函数的可读性
+2. 尾随闭包是一个被书写在函数调用括号外面(后面)的闭包表达式
+3. 如果闭包表达式是函数的唯一实参，而且使用里尾随闭包的语法，那就不需要在函数名后边写圆括号
+
+```swift
+func exec(v1: Int, v2: Int, fn:(Int, Int) -> Int) {
+    
+    print(fn(v1,v2))
+}
+
+exec(v1: 10, v2: 20) {
+    
+    $0 + $1
+}
+ 
+func execfn(fn:(Int, Int) -> Int) {
+    
+    print(fn(1,2))
+}
+
+execfn(fn: {$0+$1})
+
+execfn(){$0+$1}
+
+execfn{$0+$1}
+```
+
+### 闭包
+
+1. 一个函数和它所捕获的变量\常量环境组合起来，称为闭包
+2. (lldb) x/5xg 地址 // 会在控制台打印5组(8(g)个字节一组)该地址里内容
+3. 可以把闭包想象成一个类的实例对象，内存在堆空间，捕获的局部变量、常量就是对象的成员，组成闭包的函数就是类内部定义的方法
+
+```swift
+func getFn() -> Fn {
+   var num = 0 // 局部变量
+   func plus(_ i: Int) -> Int {
+     num += i    // 内层函数使用里外层变量，就会在堆空间申请内存存储num
+     return num
+   }
+   return plus
+}
+var fn = getFn()
+print(fn(1))  // 1
+print(fn(2))  // 3
+print(fn(3))  // 6
+```
+
+### 自动闭包
+
+1. @autoclosure会自动将20封装成闭包{20}
+2. @autoclosure只支持() → T 格式的参数
+3. @autoclosure并非只支持最后一个参数 
+4. 空合并运算符？？使用了@autoclosure技术
+5. 有@autoclosure和无@autoclosure构成了函数重载
+
+```swift
+func getFirstPositive(_ v1: Int, _ v2: @autoclosure () -> Int) -> Int {
+     
+    return v1 > 0 ? v1 : v2()
+}
+// 会自动将20封装成闭包{20}
+getFirstPositive(-4,20)
+```
+
+###汇编看闭包
+
+1. 汇编: xorl %ecx, %ecx  // 异或，ecx异或ecx为0，再将这个0赋值给ecx
+2. 汇编: movq %rcx, (%rax) // (%rax)指取出rax里面存的值
+3. 汇编: addq $0x10, %rdx // 将rdx的地址+0x10，再赋值给rdx
+4. 没有捕获严格意义上不算闭包
+
+# 属性
+
+1. Swift中跟实例相关的属性可以分为2大类
+   1. 存储属性
+      1. 类似于成员变量这个概念
+      2. 存储在实例的内存中
+      3. 结构体、类可以定义存储属性
+      4. 枚举不可以定义存储属性
+   2. 计算属性
+      1. 本质就是方法(函数)
+      2. 不占用实例的内存
+      3. 枚举、结构体、类都可以定义计算属性
+   3. 属性观察器、计算属性的功能，同样可以应用在全局变量、局部变量身上
+
+```swift
+struct Circle {
+   // 存储属性
+   var radius: Double  // 一个double占8个内存
+   // 计算属性
+   var dismeter: Double {  // 不存在dismeter这个成员变量
+      set {
+         radiu = newValue / 2
+      }
+      get {
+         radiu * 2 // 省略了return
+      }
+   }
+}
+var c = Circle = 40
+print(c.radius) // 20
+c.radius = 11
+print(c.diameter) // 22
+print(MemoryLaout<Circle>.stride)  // 8
+```
+
+## 存储属性
+
+```swift
+struct Point {
+   var x: Int = 11
+   var y: Int = 22
+    
+  // 同
+  // init() {
+  //  x = 11,
+  //  y = 22,
+  // }
+   var onlyReadValue: Double { x*2 } // 这里省略了get和return
+}
+```
+
+### 延迟存储属性
+
+1. 使用lazy可以定义一个延迟存储属性，在第一次用到属性的时候才会进行初始化
+2. lazy属性必须是var，不能是let(因为let必须在实例的初始化方法完成之前就拥有值)
+3. 如果多线程同时访问lazy，那么lazy就无法保证只被初始化一次
+4. 当结构体包含一个延迟存储属性时，只有var才能访问延迟存储属性(因为延迟属性初始化时需要改变结构体的内存)
+
+```swift
+class Car {
+   init() {
+      print("Car init!")
+   }
+   func run() {
+      print("Car is running!")
+   }
+}
+class Person {
+   lazy var car = Car()
+init() {
+      print("Person init!")
+   }
+   func goOut() {
+      car.run()
+   }
+}
+let p = Person()
+print("-------------")
+p.goOut()
+ 
+ 
+// 打印结果
+// Person init!
+// --------------
+// Car init!
+// Car is running!
+ 
+ 
+// 经典的设置图片的方法
+class PhotoView {
+   lazy var image: Image = {
+      let url = "https://www.baidu.com/xx.png"
+      let data = Data(url: url)
+      return Image(data: data)
+   }() // 一个闭包表达式，并不是计算属性的get方法
+}
+```
+
+### 属性观察器
+
+1. 可以为非lazy的var存储属性设置属性观察器
+2. willSet会传递新值，默认叫newValue
+3. didSet会传递旧值，默认叫oldValue
+4. 在初始化中设置属性值不会触发willSet和didSet
+5. 
+
+## 计算属性
+
+1. set传入的新值默认叫做newValue，也可以自定义
+
+2. 只读计算属性: 只有get，没有set
+
+3. 计算属性只能用var，不能用let
+
+4. 枚举的rawValue本质就是计算属性,只读计算属性
+
+   ```swift
+   enum Season: Int {
+      case spring = 1,summer,autumn,winter
+    
+    
+      var rawValue: Int {
+        switch self {
+          case .sprint:
+            return 11
+          case .summer:
+            return 22
+          case .autumn:
+            return 33
+          case .winter:
+            return 44
+        }
+      }
+   }
+   var s = Season.sumer
+   print(s.rawValue) // 22
+   ```
+
+## 类型属性
+
+1. 严格来说，属性可以分为
+   1. 实例属性，只能通过实例去访问
+      1. 存储实例属性: 存储在实例的内存中，每个实例都有一份
+      2. 计算实例属性
+   2. 类型属性：只能通过类型去访问
+      1. 存储类型属性: 整个程序运行过程中，就只有1份内存(类似于全局变量)
+      2. 计算类型属性
+2. 可以通过static定义类型属性
+3. 如果是类，也可以用关键字class定义类型属性
+
+```swift
+struct Shape {
+   var width: Int = 0
+   static var count: Int = 0
+}
+var s = Shape()
+// s.count = 10 // 报错，类型属性只能通过类型去访问
+Shape.count = 10
+print(Shape.count) // 10
+```
+
+### 类型属性细节
+
+1. 不同于**存储实例属性**，你必须给**存储类型属性**设定初始值
+
+   1. 因为类型没有像实例那样的init初始化器来初始化存储属性
+
+2. 存储类型属性
+
+   默认就是lazy，会在第一次使用的时候才初始化
+
+   1. 就算被多个线程同时访问，保证只会初始化一次
+   2. **存储类型属性**可以是let(因为他不是实例，实例的初始化方法完成之前要求let拥有值)
+
+3. 枚举类型也可以定义类型属性(存储类型属性、计算类型属性)
+
+4. 单例模式
+
+   ```swift
+   // 单例的写法
+   class FileManager {
+      public static let shared = FileManager()
+      private init() { }
+      func open() {
+     
+      }
+   }
+   FileManager.shared.open()
+   ```
+
+### 存储类型属性
+
+全局变量在内存中是一直存在的，这是c语言的特性
+
+```swift
+int num1 = 10
+int num2 = 11
+int num3 = 12
+// 对应汇编,3个值挨着在全局区域
+0x10001956 movq $0xa, 0xc34f(%rip)  // num1地址值: rip+0xc34f = 0x10000DCB0
+0x10001961 movq $0xb, 0xc34c(%rip)  // num2地址值: rip+0xc34c = 0x10000DCB8
+0x1000196c movq $0xc, 0xc349(%rip)  // num3地址值: rip+0xc349 = 0x10000DCc0
+0x10001977
+ 
+ 
+修改代码2代：
+int num1 = 10
+class Car {
+   static var count = 1 // 看汇编知道这里调用了swift_once，swift_once里面又调用了dispatch_once，保证了只初始化了一次和线程安全
+}
+Car.count = 11
+int num3 = 12
+// 看汇编，3个值挨着在全局区域，所以可知道，static var count从内存角度看，是在全局变量，只是定义在类里，加上了访问限制控制，只能Car.count访问，不能直接count访问
+movq $0xa, 0xc7fd(%rip)  // 算出来的值是0x10000DDD0
+...
+movq $0xb, (%rax)  // 可知，将11给了rax存储的那个值(这个值也是个内存地址)所指向位置，在汇编该句打上断点，控制台输入:register read rax 得rax = 0x10000ddd8
+...
+movq $0xa, 0xc7fd(%rip)  // 算出来的值是0x10000DDE0
 ```
 
