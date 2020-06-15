@@ -4,6 +4,10 @@ typora-root-url: ../../StudyNotes
 
 [TOC]
 
+# Runtime
+
+
+
 # 多线程
 
 ## 线程的定义
@@ -95,6 +99,8 @@ NSThread、GCD、NSOperation底层都是用的pthread
 
 打盹-睡觉-
 
+##递归非递归
+
 #### 读写锁
 
 多读单写
@@ -123,7 +129,14 @@ runloop = dict[key 线程指针]，runloop的执行是建立在线程上面的�
 
 
 
+##等source
+
+
+
 ##异步渲染
 
 ## 优先级反转
 
+https://www.jianshu.com/p/c557308c0ec5
+
+http://zenonhuang.me/2018/03/08/technology/2018-03-01-LockForiOS/
