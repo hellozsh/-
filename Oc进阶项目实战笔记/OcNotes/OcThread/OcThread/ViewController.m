@@ -22,8 +22,151 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [self createMultCons];
+//    [self createMultSers];
+    
+    
     // 利用率-cpu
-    [self threadTest]; // 耗时-堵塞-主线程-用户体验
+//    [self threadTest]; // 耗时-堵塞-主线程-用户体验
+}
+
+- (void)createMultSers {
+    
+    for (int i = 0; i < 10; i ++) {
+        
+        NSString *queueName = [NSString stringWithFormat:@"myQueue%d",10+i];
+        const char *ptr = [queueName cStringUsingEncoding:NSUTF8StringEncoding];
+
+        
+        dispatch_queue_t queue = dispatch_queue_create(ptr, DISPATCH_QUEUE_SERIAL);
+        
+        dispatch_async(queue, ^{
+        
+            NSLog(@"执行任务%@ - %@",queueName,[NSThread currentThread]);
+            sleep(10);
+        });
+    }
+    
+    
+     
+    
+    dispatch_queue_t queue2 = dispatch_queue_create("myQueue2", DISPATCH_QUEUE_SERIAL);
+    
+    dispatch_async(queue2, ^{
+    
+        NSLog(@"执行任务2 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
+    
+    dispatch_queue_t queue3 = dispatch_queue_create("myQueue3", DISPATCH_QUEUE_SERIAL);
+    
+    dispatch_async(queue3, ^{
+    
+        NSLog(@"执行任务3 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
+    
+     
+    
+    dispatch_queue_t queue4 = dispatch_queue_create("myQueue4", DISPATCH_QUEUE_SERIAL);
+    
+    dispatch_async(queue4, ^{
+    
+        NSLog(@"执行任务4 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
+    
+    
+    dispatch_queue_t queue5 = dispatch_queue_create("myQueue5", DISPATCH_QUEUE_SERIAL);
+    
+    dispatch_async(queue5, ^{
+    
+        NSLog(@"执行任务5 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
+     
+    
+    dispatch_queue_t queue6 = dispatch_queue_create("myQueue6", DISPATCH_QUEUE_SERIAL);
+    
+    dispatch_async(queue6, ^{
+    
+        NSLog(@"执行任务6 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
+}
+
+
+- (void)createMultCons {
+    
+    for (int i = 0; i < 10; i ++) {
+           
+           NSString *queueName = [NSString stringWithFormat:@"myQueue%d",10+i];
+           const char *ptr = [queueName cStringUsingEncoding:NSUTF8StringEncoding];
+
+           
+           dispatch_queue_t queue = dispatch_queue_create(ptr, DISPATCH_QUEUE_CONCURRENT);
+           
+           dispatch_async(queue, ^{
+           
+               NSLog(@"执行任务%@ - %@",queueName,[NSThread currentThread]);
+               sleep(10);
+           });
+       }
+   
+    
+    dispatch_queue_t queue = dispatch_queue_create("myQueue", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_async(queue, ^{
+    
+        NSLog(@"执行任务1 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
+    
+     
+    
+    dispatch_queue_t queue2 = dispatch_queue_create("myQueue2", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_async(queue2, ^{
+    
+        NSLog(@"执行任务2 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
+    
+    dispatch_queue_t queue3 = dispatch_queue_create("myQueue3", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_async(queue3, ^{
+    
+        NSLog(@"执行任务3 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
+    
+     
+    
+    dispatch_queue_t queue4 = dispatch_queue_create("myQueue4", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_async(queue4, ^{
+    
+        NSLog(@"执行任务4 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
+    
+    
+    dispatch_queue_t queue5 = dispatch_queue_create("myQueue5", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_async(queue5, ^{
+    
+        NSLog(@"执行任务5 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
+     
+    
+    dispatch_queue_t queue6 = dispatch_queue_create("myQueue6", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_async(queue6, ^{
+    
+        NSLog(@"执行任务6 - %@",[NSThread currentThread]);
+        sleep(10);
+    });
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
