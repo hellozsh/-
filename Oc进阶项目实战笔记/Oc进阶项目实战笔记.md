@@ -1,8 +1,6 @@
 ---
-typora-root-url: ../../StudyNotes
+typora-root-url: ../../StudyNote
 ---
-
-[TOC]
 
 # Runtime
 
@@ -30,6 +28,8 @@ OS X和iOS的核心XNU内核在发生操作系统事件时(如每隔一段时间
 
 ​	这种利用多线程编程的技术就被称为“多线程编程”。
 
+​	如果过多使用多线程，就会消耗大量内存，引起大量的上下文切换，大幅度降低系统的响应性能
+
 ## GCD
 
 ### Dispatch Queue
@@ -39,6 +39,10 @@ OS X和iOS的核心XNU内核在发生操作系统事件时(如每隔一段时间
 #### 串行队列(Serial Dispatch Queue)
 
 因为要等待现在执行中的处理结束，所以首先执行blk0，blk0执行结束后，接着执行blk1，blk1结束后再开始执行blk2，如此重复。同时执行的处理数只能有1个。
+
+​	只在为了避免多线程编程问题之一——多个线程更新相同资源导致数据竞争时使用Serial Dispatch Queue
+
+​	Serial Dispatch Queue的生成个数应当仅限所必需的数量，例如更新数据库时一个表生成一个Serial Dispatch Queue，更新文件时一个文件或是可以分割的1个文件块生成1个Serial Dispatch Queue。绝不能激动之下大量生成Serial Dispatch Queue
 
 #### 并发队列(Concurrent Dispatch Queue)
 
@@ -50,7 +54,245 @@ OS X和iOS的核心XNU内核在发生操作系统事件时(如每隔一段时间
 
 ​	假设准备4个Concurrent Dispatch Queue用线程，首先blk0再线程0中开始执行，接着blk1在线程1中、blk2在线程2中、blk3在线程3中开始执行。线程0中blk0执行结束后开始执行blk4，由于线程1中blk1的执行没有结束，因此线程2中blk2执行结束后开始执行blk5，就这样循环往复
 
+#### dispatch_queue_create
 
+dispatch_queue_create可生成Dispatch Queue，虽然Serial Dispatch Queue和Concurrent Dispatch Queue受到系统资源的限制，但用dispatch_queue_create函数可生成任意多个Dispatch Queue
+
+​		当生成多个Serial Dispatch Queue时，各个Serial Dispatch Queue将并行执行。虽然在1个Serial Dispatch Queue中同时只能执行一个追加处理，但如果将处理分别追加到4个Serial Dispatch Queue中，各个Serial Dispatch Queue执行1个，即为同时执行4个处理。
+
+​      对于Concurrent Dispatch Queue来说，不管生成多少，由于XNU内核只使用有效管理的线程，因此不会发生Serial Dispatch Queue的那些问题
+
+​	在iOS6.0以下通过dispatch_queue_create生成的Dispatch Queue在使用结束后通过dispatch_release函数释放，iOS6.0以及以上ARC会自动管理
+
+#### 系统提供的Dispatch Queue
+
+​	Main Dispatch Queue是在主线程执行的Dispatch Queue，因为主线程只有一个，所以Main Dispatch Queue自然就是Serial Dispatch Queue，追加到Main Dispatch Queue的处理在主线程的RunLoop中执行。
+
+​	Global Dispatch Queue有四个执行优先级,4个全局队列，分别是高优先级(High Priority)、默认优先级(Default Priority)、低优先级(Low Priority)和后台优先级(Background Priority)。通过XNU内核管理的用于Global Dispatch Queue的线程，将各自使用的Global Dispatch Queue的执行优先级作为线程的执行优先级使用。
+
+#### 为创建的Dispatch Queue创建优先级
+
+​	自己创建的Dispatch Queue优先级都使用与默认优先级Global Dispatch Queue相同执行优先级的线程。而变更自己创建的Dispatch Queue执行优先级要使用dispatch_set_target_queue函数
+
+```objective-c
+dispatch_queue_t mySerialDispatchQueue = dispatch_queue_create("com.example.gcd.MySerialDispatchQueue",NULL);
+dispatch_queue_ t globalDispatchQueueBackground = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND,0);
+dispatch_set_target_queue(mySerialDispatchQueue, globalDispatchQueueBackground);
+```
+
+iOS 8之后建议用dispatch_queue_attr_t设置优先级
+
+```objective-c
+//iOS 8以上 
+dispatch_queue_attr_t attr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INITIATED, 0);
+dispatch_queue_t queues = dispatch_queue_create("com.yh.render", attr);
+```
+
+#### 延迟执行(dispatch_after)
+
+​	想在指定时间后执行处理的情况，可使用dispatch_after函数来实现
+
+​	需要注意的是, dispatch_after函数并不是在指定时间后执行处理，而只是在指定时间追加处理到Dispatch Queue。此源代码与在3秒后用dispatch_async函数追加Block到Main Dispatch Queue的相同。
+
+​	因为Main Dispatch Queue在主线程的RunLoop中执行，所以在比如每隔1/60秒执行的RunLoop中，Block最快在3秒后执行，最慢在3秒+1/60秒后执行，并且在Main Dispatch Queue有大量处理追加或主线程的处理本身有延迟时，这个时间会更长
+
+```objective-c
+// 从第一个参数中指定的时间开始，到第二个参数指定的毫微秒单位时间后的时间
+    // ull 是C语言的数值字面量，是显式表明类型时使用的字符串("unsigned long long")
+//    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 3ull*NSEC_PER_SEC);
+   
+   // 第一个参数是指定时间用的dispatch_time_t类型值,该值使用dispatch_time函数或dispatch_walltime函数作成
+    // dispatch_walltime用于计算绝对时间
+    NSTimeInterval interval = [[NSDate date] timeIntervalSince1970];
+    double second;
+    double subsecond = modf(interval, &second);
+    
+    struct timespec time;
+    time.tv_sec = second;
+    time.tv_nsec = subsecond * NSEC_PER_SEC;
+    dispatch_time_t miletone = dispatch_walltime(&time, 0);
+   
+    dispatch_after(miletone, dispatch_get_main_queue(), ^{
+       
+        NSLog(@"waited at least three seconds");
+    });
+```
+
+#### Dispatch Group
+
+​	1. 在追加到Dispatch Queue中的多个处理全部结束后想执行结束处理。无论向什么样的Dispatch Queue中追加处理，使用Dispatch Group都可监视这些处理执行的结束。一旦检测到所有处理执行结束，就可将结束的处理追加到Dispatch Queue中
+
+在追加到Dispatch Group中的处理全部执行结束时，该源代码中使用的dispatch_group_notify函数会将执行的Block追加到Dispatch Queue中，将第一个参数指定为要监视的Dispatch Group。在追加到该Dispatch Group的全部处理执行结束时，将第三个参数的Block追加到第二个参数的Dispatch Queue中。
+
+​	2. 也可以使用dispatch_group_wait函数仅等待全部处理执行结束
+
+dispatch_group_wait函数的第二个参数指定为等待的时间(超时)。它属于dispatch_time_t类型的值。一旦调用dispatch_group_wait函数，该函数就处于调用的状态而不返回。即执行dispatch_group_wait函数的现在的线程(当前线程)停止。
+
+```objective-c
+dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_group_t group = dispatch_group_create();
+    
+    dispatch_group_async(group, queue, ^{
+        sleep(2);
+        NSLog(@"blk0");
+    });
+    dispatch_group_async(group, queue, ^{
+        sleep(2);
+        NSLog(@"blk1");
+    });
+    dispatch_group_async(group, queue, ^{
+        sleep(6);
+        NSLog(@"blk2");
+    });
+    // 不会阻碍主线程
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+       NSLog(@"done");
+    });
+    // 会让dispatch_group_wait的当前线程停止(这里是写在主线程上)；
+//    long result = dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+//    if (result == 0) {
+//       NSLog(@"done");
+//    }
+```
+
+#### dispatch_barrier_async
+
+多读单写问题：为了高效率地进行访问，读取处理可以并行执行，写入处理不可以与其他写入处理以及包含读取处理并行执行
+
+​	dispatch_barrier_async，该函数同dispatch_queue_create函数生成的Concurrent Dispatch Queue一起使用(全局队列使用无效)
+
+​	dispatch_barrier_async函数会等待追加到Concurrent Dispatch Queue上的并行执行的处理全部结束之后，再将指定的处理追加到该Concurrent Dispatch Queue中。然后再由dispatch_barrier_async函数追加的处理执行完毕后，Concurrent Dispatch Queue才恢复为一般的动作，追加到该Concurrent Dispatch Queue的处理又开始并行执行。
+
+```objective-c
+dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_group_t group = dispatch_group_create();
+    
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"blk0");
+    });
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"blk1");
+    });
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"blk2");
+    });
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        
+        dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+            NSLog(@"donw");
+        });
+        NSLog(@"dispatch_group_wait 结束");
+    });
+```
+
+#### dispatch_sync
+
+dispatch_async：不做任何等待，将指定的Block"非同步"地追加到指定的Dispatch Queue中
+
+dispatch_sync: 等待处理执行结束, 将指定的Block"同步"地追加到指定的Dispatch Queue中,如dispatch_group_wait说明:"等待"意味着当前线程停止
+
+```objective-c
+dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_sync(queue, ^{
+
+        NSLog(@"test --- sync start");
+        sleep(5);
+        NSLog(@"test --- sync end");
+    });
+    NSLog(@"哈哈哈哈哈哈哈");
+    // test --- sync start    test --- sync end    哈哈哈哈哈哈哈
+    
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, ^{
+
+        NSLog(@"test --- sync start");
+        sleep(5);
+        NSLog(@"test --- sync end");
+    });
+    NSLog(@"哈哈哈哈哈哈哈");
+    // test --- sync start  哈哈哈哈哈哈哈   test --- sync end    
+```
+
+##### 使用场景: 
+
+​	执行Main Dispatch Queue时，使用另外的线程Global Dispatch Queue进行处理，处理结束后立即使用所得到的结果。在这种情况下就要使用dispatch_sync函数
+
+​	dispatch_sync使用简单，也容易引起死锁
+
+​	如在主线程执行以下源代码就会死锁: 该源代码在主线程执行的Block，并等待其执行结束，而其实在主线程正在执行这些源代码，所以无法执行追加到主线程的Block
+
+```objective-c
+dispatch_queue_t queue = dispatch_get_main_queue（）；
+dispatch_sync(queue, ^{NSLog(@"Hello?")}); 
+```
+
+#### dispatch_apply
+
+dispatch_apply是dispatch_sync和Dispatch Queue的关联API，该函数按指定的次数将指定的Block追加到指定的Dispatch Queue中，并等待全部处理执行结束
+
+​	输出结果中最后的done必定在最后的位置上。这是因为dispatch_apply函数会等待全部处理执行结束。
+
+```objective-c
+dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_apply(10, queue, ^(size_t index) {
+        NSLog(@"%zu",index);
+    });
+    NSLog(@"done");
+
+// 推荐用法
+dispatch_asynce(queue, ^{
+  dispatch_apply(10, queue,....
+  
+});
+```
+
+由于dispatch_apply函数会等待全部处理执行结束，所以推荐在dispatch_async函数中"非同步"地执行dispatch_apply函数
+
+#### dispatch_suspend/dispatch_resume
+
+dispatch_suspend： 挂起指定的dispatch Queue
+
+dispatch_resume: 恢复指定的dispatch queue
+
+挂起后，追加到dispatch queue中但尚未执行的处理在此之后停止执行，而恢复则使得这些处理能够继续执行。
+
+#### Dispatch Semaphore
+
+Dispatch Semaphore是持有计数的信号
+
+dispatch_semaphore_wait函数等待Dispatch Semaphore的计数值达到大于或等于1
+
+dispatch_semaphore_signal将Dispatch Semaphore的计数值+1
+
+```objective-c
+dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
+    
+   
+    dispatch_async(queue, ^{
+       
+         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        NSLog(@"test --- async start");
+        sleep(5);
+        NSLog(@"test --- async end");
+        dispatch_semaphore_signal(semaphore);
+    });
+     // 会让当前线程停止
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    dispatch_async(queue, ^{
+       
+        NSLog(@"111test --- async start");
+        sleep(5);
+        NSLog(@"111test --- async end");
+        dispatch_semaphore_signal(semaphore);
+    });
+```
+
+#### dispatch_once
+
+#### dispatch I/O
+
+如想提高文件读取速度，可以尝试使用Dispatch I/O
 
 ## 线程的定义
 
