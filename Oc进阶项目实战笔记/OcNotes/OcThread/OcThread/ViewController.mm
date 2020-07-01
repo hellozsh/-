@@ -21,13 +21,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-     
-    [self testSemaphore];
+    
+    
+//    [self testSemaphore];
 //    [self testSync];
 //    [self testBarrier];
     
 //    [self testThird];
-      [self test];
+//      [self test];
     
     
 //    [self testGroup];

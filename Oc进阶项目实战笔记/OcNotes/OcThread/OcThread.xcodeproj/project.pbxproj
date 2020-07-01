@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		A39199B2248D3EDB00FE7BDB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A39199B1248D3EDB00FE7BDB /* AppDelegate.m */; };
 		A39199B5248D3EDB00FE7BDB /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A39199B4248D3EDB00FE7BDB /* SceneDelegate.m */; };
-		A39199B8248D3EDB00FE7BDB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A39199B7248D3EDB00FE7BDB /* ViewController.m */; };
+		A39199B8248D3EDB00FE7BDB /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = A39199B7248D3EDB00FE7BDB /* ViewController.mm */; };
 		A39199BB248D3EDB00FE7BDB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A39199B9248D3EDB00FE7BDB /* Main.storyboard */; };
 		A39199BD248D3EDD00FE7BDB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A39199BC248D3EDD00FE7BDB /* Assets.xcassets */; };
 		A39199C0248D3EDD00FE7BDB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A39199BE248D3EDD00FE7BDB /* LaunchScreen.storyboard */; };
@@ -17,6 +17,9 @@
 		A39199CD248D3EDD00FE7BDB /* OcThreadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A39199CC248D3EDD00FE7BDB /* OcThreadTests.m */; };
 		A39199D8248D3EDD00FE7BDB /* OcThreadUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = A39199D7248D3EDD00FE7BDB /* OcThreadUITests.m */; };
 		A39199E7248D3F9600FE7BDB /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = A39199E6248D3F9600FE7BDB /* Person.m */; };
+		A3F07BED24ACA43100BE8404 /* thirdViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = A3F07BEC24ACA43100BE8404 /* thirdViewController.mm */; };
+		A3F07BF124ACA4A600BE8404 /* PthreadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A3F07BF024ACA4A600BE8404 /* PthreadTest.m */; };
+		A3F07BF424ACAAEB00BE8404 /* NSThreadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A3F07BF324ACAAEB00BE8404 /* NSThreadTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,7 +46,7 @@
 		A39199B3248D3EDB00FE7BDB /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
 		A39199B4248D3EDB00FE7BDB /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		A39199B6248D3EDB00FE7BDB /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		A39199B7248D3EDB00FE7BDB /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		A39199B7248D3EDB00FE7BDB /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		A39199BA248D3EDB00FE7BDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A39199BC248D3EDD00FE7BDB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A39199BF248D3EDD00FE7BDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -57,6 +60,12 @@
 		A39199D9248D3EDD00FE7BDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A39199E5248D3F9600FE7BDB /* Person.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
 		A39199E6248D3F9600FE7BDB /* Person.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
+		A3F07BEB24ACA43100BE8404 /* thirdViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = thirdViewController.h; sourceTree = "<group>"; };
+		A3F07BEC24ACA43100BE8404 /* thirdViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = thirdViewController.mm; sourceTree = "<group>"; };
+		A3F07BEF24ACA4A600BE8404 /* PthreadTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PthreadTest.h; sourceTree = "<group>"; };
+		A3F07BF024ACA4A600BE8404 /* PthreadTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PthreadTest.m; sourceTree = "<group>"; };
+		A3F07BF224ACAAEB00BE8404 /* NSThreadTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSThreadTest.h; sourceTree = "<group>"; };
+		A3F07BF324ACAAEB00BE8404 /* NSThreadTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSThreadTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,7 +121,10 @@
 				A39199B3248D3EDB00FE7BDB /* SceneDelegate.h */,
 				A39199B4248D3EDB00FE7BDB /* SceneDelegate.m */,
 				A39199B6248D3EDB00FE7BDB /* ViewController.h */,
-				A39199B7248D3EDB00FE7BDB /* ViewController.m */,
+				A39199B7248D3EDB00FE7BDB /* ViewController.mm */,
+				A3F07BEE24ACA44700BE8404 /* thread */,
+				A3F07BEB24ACA43100BE8404 /* thirdViewController.h */,
+				A3F07BEC24ACA43100BE8404 /* thirdViewController.mm */,
 				A39199E5248D3F9600FE7BDB /* Person.h */,
 				A39199E6248D3F9600FE7BDB /* Person.m */,
 				A39199B9248D3EDB00FE7BDB /* Main.storyboard */,
@@ -140,6 +152,17 @@
 				A39199D9248D3EDD00FE7BDB /* Info.plist */,
 			);
 			path = OcThreadUITests;
+			sourceTree = "<group>";
+		};
+		A3F07BEE24ACA44700BE8404 /* thread */ = {
+			isa = PBXGroup;
+			children = (
+				A3F07BEF24ACA4A600BE8404 /* PthreadTest.h */,
+				A3F07BF024ACA4A600BE8404 /* PthreadTest.m */,
+				A3F07BF224ACAAEB00BE8404 /* NSThreadTest.h */,
+				A3F07BF324ACAAEB00BE8404 /* NSThreadTest.m */,
+			);
+			path = thread;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -272,8 +295,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A39199B8248D3EDB00FE7BDB /* ViewController.m in Sources */,
+				A3F07BF124ACA4A600BE8404 /* PthreadTest.m in Sources */,
+				A39199B8248D3EDB00FE7BDB /* ViewController.mm in Sources */,
+				A3F07BF424ACAAEB00BE8404 /* NSThreadTest.m in Sources */,
 				A39199B2248D3EDB00FE7BDB /* AppDelegate.m in Sources */,
+				A3F07BED24ACA43100BE8404 /* thirdViewController.mm in Sources */,
 				A39199E7248D3F9600FE7BDB /* Person.m in Sources */,
 				A39199C3248D3EDD00FE7BDB /* main.m in Sources */,
 				A39199B5248D3EDB00FE7BDB /* SceneDelegate.m in Sources */,
