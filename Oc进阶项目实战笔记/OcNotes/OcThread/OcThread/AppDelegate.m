@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "thirdViewController.h"
 
 @interface AppDelegate ()
 
@@ -16,12 +17,20 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+     
 //    NSArray *arr = @[ @11, @3, @4,@99,@6,@2,@9,@3,@2,@20];  // @1, @3, @4,
 //
 //
 //    NSArray *result = [self guibin:arr];
 //    NSLog(@"zhousuhua ====== result=%@",result);
+ 
+    
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.window.backgroundColor = [UIColor whiteColor];
+    self.window.rootViewController = [[thirdViewController alloc] init];
+    [self.window makeKeyAndVisible];
+    
+    // Override point for customization after application launch.
     return YES;
 }
     

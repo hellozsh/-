@@ -39,6 +39,7 @@
     dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT);
     [self testGroupEnter];
     [self testsync1];
+ 
 //    [self testSemaphore];
 //    [self testSync];
 //    [self testBarrier];
