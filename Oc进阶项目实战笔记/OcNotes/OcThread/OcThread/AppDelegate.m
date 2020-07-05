@@ -16,10 +16,64 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+//    NSArray *arr = @[ @11, @3, @4,@99,@6,@2,@9,@3,@2,@20];  // @1, @3, @4,
+//
+//
+//    NSArray *result = [self guibin:arr];
+//    NSLog(@"zhousuhua ====== result=%@",result);
     return YES;
 }
+    
+- (NSArray *)guibin:(NSArray *)arr {
+    
+    if (arr.count == 1) {
+        return arr;
+    }
+    NSMutableArray *oriArr = [[NSMutableArray alloc] initWithArray:arr];
 
+    int count = oriArr.count / 2;
+    NSArray *arr1 = [oriArr subarrayWithRange:NSMakeRange(0, count)];
+    NSArray *arr2 = [oriArr subarrayWithRange:NSMakeRange(count, oriArr.count-count)];
+   
+    NSArray *paihao1 = [NSArray arrayWithArray:[self guibin:arr1]];
+    NSArray *paihao2 = [NSArray arrayWithArray:[self guibin:arr2]];
+    NSLog(@"paihao1=%@, paihao1=%@",paihao1, paihao2);
+     
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:arr.count];
+   
+    int indexX=0;
+    int indexY = 0;
+    
+    for (indexY= 0,indexX = 0; indexY < paihao2.count && indexX < paihao1.count;) {
+        
+         if ([paihao1[indexX] intValue] > [paihao2[indexY] intValue]) {
+             
+             [result addObject:paihao2[indexY]];
+             indexY++;
+         } else if([paihao1[indexX] intValue] == [arr2[indexY] intValue]) {
+             
+             [result addObject:paihao1[indexX]];
+             [result addObject:paihao2[indexY]];
+             indexX++;
+             indexY++;
+         } else {
+             
+             [result addObject:paihao1[indexX]];
+             indexX++;
+             
+         }
+    }
+     
+    for (int i = indexX; i < paihao1.count; i++) {
+        [result addObject:paihao1[i]];
+    }
+    for (int i = indexY; i < paihao2.count; i++) {
+         [result addObject:paihao2[i]];
+    }
+    NSLog(@"result === %@",result);
+    return result;
+}
 
 #pragma mark - UISceneSession lifecycle
 

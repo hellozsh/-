@@ -17,17 +17,34 @@
 
 @end
 
+#define ___safe_cast_to_long(x) \
+({ _Static_assert(sizeof(typeof(x)) <= sizeof(long), \
+        "__builtin_expect doesn't support types wider than long"); \
+        (long)(x); })
+#define __slowpath(x) ((typeof(x))__builtin_expect(___safe_cast_to_long(x), 0l))
+
+
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
      
-    [self testSemaphore];
+    
+    NSLog(@"=====%d",sizeof(typeof(DISPATCH_QUEUE_CONCURRENT)) <= sizeof(long));
+    
+    NSLog(@"=====%ld",___safe_cast_to_long(DISPATCH_QUEUE_CONCURRENT));
+    
+    NSLog(@"=====%ld",__slowpath(NULL));
+    
+    dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT);
+    [self testGroupEnter];
+    [self testsync1];
+//    [self testSemaphore];
 //    [self testSync];
 //    [self testBarrier];
     
 //    [self testThird];
-      [self test];
+//      [self test];
     
     
 //    [self testGroup];
@@ -39,6 +56,57 @@
     
     // 利用率-cpu
 //    [self threadTest]; // 耗时-堵塞-主线程-用户体验
+}
+
+- (void)testGroupEnter {
+    
+    dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
+    dispatch_group_t group = dispatch_group_create();
+    
+    dispatch_group_enter(group);
+    dispatch_async(queue, ^{
+        NSLog(@"第一个走完了");
+        dispatch_group_leave(group);
+    });
+    
+    dispatch_group_enter(group);
+    dispatch_async(queue, ^{
+        NSLog(@"第二个走完了");
+        dispatch_group_leave(group);
+    });
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        NSLog(@"所有任务完成，可以更新UI");
+    });
+}
+
+- (void)testsync1 {
+
+   NSLock *lock = [[NSLock alloc] init];
+    dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
+    __block int a = 0;
+    while (a < 10) {
+        dispatch_async(queue, ^{
+            a++;
+        });
+    }
+    NSLog(@"%d",a); // 并不是a真正的值
+    
+    dispatch_async(queue, ^{
+       
+        NSLog(@"真正%d",a);
+    });
+    
+//    dispatch_queue_t queue = dispatch_queue_create("zhouzhou", DISPATCH_QUEUE_CONCURRENT);
+//    NSLog(@"1");
+//    dispatch_async(queue, ^{
+//        NSLog(@"2");
+//
+//        dispatch_sync(queue, ^{
+//            NSLog(@"3");
+//        });
+//        NSLog(@"4");
+//    });
+//    NSLog(@"5");
 }
 
 - (void)testSemaphore {
