@@ -23,7 +23,7 @@
 //
 //    NSArray *result = [self guibin:arr];
 //    NSLog(@"zhousuhua ====== result=%@",result);
- 
+//
     
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];

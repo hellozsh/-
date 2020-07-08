@@ -36,11 +36,19 @@ GCD 在后端管理着一个[线程池](http://en.wikipedia.org/wiki/Thread_pool
 
 ### Dispatch Queue
 
-执行处理的等待队列。应用程序编程人员通过dispatch_async函数等API，在Block语法中记述想执行的处理并将其追加到Dispatch Queue中，Dispatch Queue按照追加的顺序(先进先出FIFO)执行处理。
+执行处理的等待队列。应用程序编程人员通过dispatch_async函数等API，在Block语法中记述想执行的处理并将其追加到Dispatch Queue中，Dispatch Queue按照追加的顺序(先进先出FIFO)执行处理。一个队列一次只能调用一个block，但是独立的队列可以彼此同时调用它们的块。
+
+线程池来负责处理队列以及调度提交给队列的block，
 
 通过集中的管理线程，来缓解大量线程被创建的问题。
 
 GCD 公开有 5 个不同的队列：运行在主线程中的 main queue，3 个不同优先级的后台队列，以及一个优先级更低的后台队列（用于 I/O）。 另外，开发者可以创建自定义队列：串行或者并行队列。自定义队列非常强大，在自定义队列中被调度的所有 block 最终都将被放入到<font color=#FF0000>系统的全局队列中和线程池</font>中。
+
+全局队列的底层是一个线程池，向全局队列中提交的 block，都会被放到这个线程池中执行，如果线程池已满，后续再提交 block 就不会再重新创建线程，
+
+因为整个 APP 是在共享一个全局队列的线程池，那么如果 APP 把线程池沾满了，甚至线程池长时间占满且不结束，那么 AFNetworking 就自然不能再执行任务了，所以我们看到，即使是只会创建一条常驻线程， AFNetworking 依然采用了 NSThread 的方式而非 GCD 全局队列这种方式来创建常驻线程。
+
+![队列和线程池](/Oc进阶项目实战笔记/队列和线程池.png)
 
 #### 串行队列(Serial Dispatch Queue)
 

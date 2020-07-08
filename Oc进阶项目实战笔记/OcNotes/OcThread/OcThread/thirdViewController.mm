@@ -20,12 +20,91 @@
     [super viewDidLoad];
     
     
-    test();
+//    test();
     
-    [self testNSThread];
+    [self testGCDthreadAsyncSer];
+    
+//    []
     
     
     // Do any additional setup after loading the view.
+}
+
+- (void)testGCDthreadSyncCon {  // 执行，线程变成了主线程
+         
+    dispatch_queue_t queue = dispatch_queue_create("com.conr",DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_sync(queue, ^{
+        
+        for (int i = 0; i < 50; i ++) {
+            NSLog(@"blk0---------%d,name=%@",i,[NSThread currentThread]);
+        }
+    });
+    dispatch_sync(queue, ^{
+       
+        for (int i = 0; i < 50; i ++) {
+            NSLog(@"blk1---------%d,name=%@",i,[NSThread currentThread]);
+        }
+    });
+    
+}
+
+- (void)testGCDthreadAsyncCon {  // 并发执行，2个线程，
+         
+    dispatch_queue_t queue = dispatch_queue_create("com.conr",DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_async(queue, ^{
+        
+        for (int i = 0; i < 50; i ++) {
+            NSLog(@"blk0---------%d,name=%@",i,[NSThread currentThread]);
+        }
+    });
+    dispatch_async(queue, ^{
+       
+        for (int i = 0; i < 50; i ++) {
+            NSLog(@"blk1---------%d,name=%@",i,[NSThread currentThread]);
+        }
+    });
+    
+}
+
+
+- (void)testGCDthreadSyncSer {  // 串行执行，线程一个，
+         
+    dispatch_queue_t queue = dispatch_queue_create("com.conr",NULL);
+    
+    dispatch_sync(queue, ^{
+        
+        for (int i = 0; i < 50; i ++) {
+            NSLog(@"blk0---------%d,name=%@",i,[NSThread currentThread]);
+        }
+    });
+    dispatch_sync(queue, ^{
+       
+        for (int i = 0; i < 50; i ++) {
+            NSLog(@"blk1---------%d,name=%@",i,[NSThread currentThread]);
+        }
+    });
+    
+}
+
+- (void)testGCDthreadAsyncSer {  // 串行执行，线程一个，
+    
+    dispatch_queue_t queue = dispatch_queue_create("com.conr", NULL);
+    
+    dispatch_async(queue, ^{
+        
+        for (int i = 0; i < 50; i ++) {
+            NSLog(@"blk0---------%d,name=%@",i,[NSThread currentThread]);
+        }
+    });
+    dispatch_async(queue, ^{
+       
+        for (int i = 0; i < 50; i ++) {
+            NSLog(@"blk1---------%d,name=%@",i,[NSThread currentThread]);
+        }
+    });
+    
 }
 
 - (void)testNSThread {

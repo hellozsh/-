@@ -23,6 +23,24 @@
         (long)(x); })
 #define __slowpath(x) ((typeof(x))__builtin_expect(___safe_cast_to_long(x), 0l))
 
+#define DISPATCH_QUEUE_ATTR_OVERCOMMIT2IDX(overcommit) \
+        ((overcommit) == _dispatch_queue_attr_overcommit_disabled ? \
+        DQA_INDEX_NON_OVERCOMMIT : \
+        ((overcommit) == _dispatch_queue_attr_overcommit_enabled ? \
+        DQA_INDEX_OVERCOMMIT : DQA_INDEX_UNSPECIFIED_OVERCOMMIT))
+
+#define DISPATCH_QUEUE_ATTR_CONCURRENT2IDX(concurrent) \
+        ((concurrent) ? DQA_INDEX_CONCURRENT : DQA_INDEX_SERIAL)
+
+#define DISPATCH_QUEUE_ATTR_INACTIVE2IDX(inactive) \
+        ((inactive) ? DQA_INDEX_INACTIVE : DQA_INDEX_ACTIVE)
+
+#define DISPATCH_QUEUE_ATTR_AUTORELEASE_FREQUENCY2IDX(frequency) \
+        (frequency)
+
+#define DISPATCH_QUEUE_ATTR_PRIO2IDX(prio) (-(prio))
+
+#define DISPATCH_QUEUE_ATTR_QOS2IDX(qos) (qos)
 
 @implementation ViewController
 
@@ -30,11 +48,29 @@
     [super viewDidLoad];
      
     
-    NSLog(@"=====%d",sizeof(typeof(DISPATCH_QUEUE_CONCURRENT)) <= sizeof(long));
     
-    NSLog(@"=====%ld",___safe_cast_to_long(DISPATCH_QUEUE_CONCURRENT));
+    return;
+    __block int a = 0;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        a++;
+        NSLog(@"zhosuhua ------ %d",a);
+    });
     
-    NSLog(@"=====%ld",__slowpath(NULL));
+    
+    
+//
+//    NSLog(@"=====%ld",DISPATCH_QUEUE_ATTR_PRIO2IDX(0));
+//
+////    NSLog(@"=====%ld",DQA_INDEX_UNSPECIFIED_OVERCOMMIT);
+////
+////
+////    NSLog(@"=====%d",DISPATCH_QUEUE_ATTR_AUTORELEASE_FREQUENCY2IDX(0));
+////
+////       NSLog(@"=====%ld",DISPATCH_QUEUE_ATTR_CONCURRENT2IDX(false));  // DQA_INDEX_SERIAL
+////
+//       NSLog(@"=====%ld",DISPATCH_QUEUE_ATTR_INACTIVE2IDX(false));  DQA_INDEX_ACTIVE
+//
+    
     
     dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT);
     [self testGroupEnter];
