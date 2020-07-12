@@ -22,13 +22,53 @@
     
 //    test();
     
-    [self testGCDthreadAsyncSer];
+//    [self testGCDthreadAsyncSer];
     
+    [self testsync];
 //    []
     
     
     // Do any additional setup after loading the view.
 }
+
+- (void)testsync {
+    
+    // 同步的作用和队列无关，而与队列所执行的线程有关，即同步只有在2个以及2个以上线程时，才会有真实作用
+    dispatch_queue_t queue = dispatch_queue_create("zhou.com", NULL);
+    dispatch_async(queue, ^{
+       
+        NSLog(@"001--------%@",[NSThread currentThread]);
+        dispatch_sync(queue, ^{
+           NSLog(@"0--------%@",[NSThread currentThread]);
+           sleep(2);
+        });
+        NSLog(@"1--------%@",[NSThread currentThread]);
+        sleep(2);
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            sleep(2);
+            NSLog(@"2======%@",[NSThread currentThread]);
+        });
+        NSLog(@"3==========%@",[NSThread currentThread]);
+    });
+    
+    dispatch_async(queue, ^{
+       
+        NSLog(@"4--------%@",[NSThread currentThread]);
+        sleep(2);
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+//            sleep(2);
+//            NSLog(@"5======%@",[NSThread currentThread]);
+//        });
+        NSLog(@"6==========%@",[NSThread currentThread]);
+    });
+    
+//     dispatch_sync(dispatch_get_main_queue(), ^{
+//         sleep(2);
+//         NSLog(@"5======%@",[NSThread currentThread]);
+//     });
+    
+}
+
 
 - (void)testGCDthreadSyncCon {  // 执行，线程变成了主线程
          
@@ -104,7 +144,6 @@
             NSLog(@"blk1---------%d,name=%@",i,[NSThread currentThread]);
         }
     });
-    
 }
 
 - (void)testNSThread {
