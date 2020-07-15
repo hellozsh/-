@@ -22,7 +22,7 @@
     
 //    test();
     
-    [self testGCDthreadAsyncSer];
+//    [self testGCDthreadAsyncSer];
     
 //    []
     
