@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:NSURLSessionDemo/NSURLSessionDemo.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:ScrollViewTest/ScrollViewTest.xcodeproj">
    </FileRef>
    <FileRef

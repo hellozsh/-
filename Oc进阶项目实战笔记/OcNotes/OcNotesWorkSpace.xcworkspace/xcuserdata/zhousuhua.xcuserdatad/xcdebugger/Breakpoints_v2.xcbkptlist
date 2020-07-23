@@ -84,5 +84,85 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ADD2174F-1F97-474B-B866-039BB4AAB062"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NSURLSessionDemo/NSURLSessionDemo/SessionDataTask.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
+            landmarkName = "postDemo()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "ADD2174F-1F97-474B-B866-039BB4AAB062 - 169e26478152e485"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static NSURLSessionDemo.SessionDataTask.postDemo() -&gt; ()"
+                  moduleName = "NSURLSessionDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/zhousuhua/Desktop/iOS%E5%AD%A6%E4%B9%A0/%E7%AC%94%E8%AE%B0/%E6%89%80%E6%9C%89%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Oc%E8%BF%9B%E9%98%B6%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E7%AC%94%E8%AE%B0/OcNotes/NSURLSessionDemo/NSURLSessionDemo/SessionDataTask.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "46"
+                  endingLineNumber = "46"
+                  offsetFromSymbolStart = "963">
+               </Location>
+               <Location
+                  uuid = "ADD2174F-1F97-474B-B866-039BB4AAB062 - 28b0eec61f6d5bef"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in static NSURLSessionDemo.SessionDataTask.postDemo() -&gt; ()"
+                  moduleName = "NSURLSessionDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/zhousuhua/Desktop/iOS%E5%AD%A6%E4%B9%A0/%E7%AC%94%E8%AE%B0/%E6%89%80%E6%9C%89%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Oc%E8%BF%9B%E9%98%B6%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E7%AC%94%E8%AE%B0/OcNotes/NSURLSessionDemo/NSURLSessionDemo/SessionDataTask.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "130">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D646CA93-54FD-4D7B-A5B4-826F9D2730D3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NSURLSessionDemo/NSURLSessionDemo/SessionDataTask.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
+            landmarkName = "postDemo()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "76C66495-B934-4D18-A444-C3A1D8684F16"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NSURLSessionDemo/NSURLSessionDemo/SessionDataTask.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "postDemo()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
