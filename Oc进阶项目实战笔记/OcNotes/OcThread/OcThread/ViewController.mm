@@ -11,9 +11,15 @@
 
 @interface ViewController ()
 
+{
+    CGFloat _progress;
+    UILabel *_titleLbl;
+}
 @property (nonatomic, strong) Person *p;
 
 @property (nonatomic, strong) NSThread *t;
+
+
 
 @end
 
@@ -44,17 +50,116 @@
 
 @implementation ViewController
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    
+    _progress += 0.1;
+    
+    CGFloat currentAlpha = MAX(1-_progress*1.1,0);
+    CGFloat duration = 0.3;
+    
+    CABasicAnimation *opacity = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    opacity.duration = duration;
+    opacity.fromValue = @(currentAlpha);
+    opacity.toValue = @(0);
+    opacity.removedOnCompletion = NO;
+    opacity.fillMode = kCAFillModeForwards;
+    [_titleLbl.layer addAnimation:opacity forKey:@"opacity"];
+    [_titleLbl setNeedsLayout];
+    [_titleLbl layoutIfNeeded];
+    
+    
+    
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-     
     
     
+    _titleLbl = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 40, 40)];
+    _titleLbl.text = @"12";
+    [self.view addSubview:_titleLbl];
+    
+    UILabel *titleLbl2 = [[UILabel alloc] initWithFrame:CGRectMake(100, 190, 90, 40)];
+    titleLbl2.text = @"34";
+    [self.view addSubview:titleLbl2];
+      
     return;
-    __block int a = 0;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        a++;
-        NSLog(@"zhosuhua ------ %d",a);
+     
+    // 会崩溃
+//    dispatch_queue_t serQue = dispatch_queue_create("com.ser", DISPATCH_QUEUE_SERIAL);
+
+//    dispatch_async(serQue, ^{
+//
+//        NSLog(@"1111-------%@",[NSThread currentThread]);  // 1111-------<NSThread: 0x6000028cf400>{number = 3, name = (null)}
+//        sleep(2);
+//        dispatch_sync(serQue, ^{  // 崩溃在这里
+//
+//            sleep(3);
+//            NSLog(@"2222------%@",[NSThread currentThread]);  //
+//        });
+//
+//        NSLog(@"3333----------%@",[NSThread currentThread]);
+//    });
+    
+    // 不会崩溃，只有一个线程
+   dispatch_queue_t que = dispatch_queue_create("com.ser", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_async(que, ^{
+       
+        NSLog(@"1-------%@",[NSThread currentThread]); // 1-------<NSThread: 0x600003451640>{number = 6, name = (null)}
+        sleep(2);
+        dispatch_async(que, ^{  // 当前线程
+             
+            for (int i = 0; i< 10; i++) {
+                NSLog(@"2------%@",[NSThread currentThread]);  //  2------<NSThread: 0x600003451640>{number = 6, name = (null)}
+            }
+             
+            dispatch_sync(que, ^{  // 当前线程
+                
+                sleep(3);
+                NSLog(@"3------%@",[NSThread currentThread]);  //  2------<NSThread: 0x600003451640>{number = 6, name = (null)}
+                
+                dispatch_sync(que, ^{  // 当前线程
+                    
+                    sleep(3);
+                    NSLog(@"4------%@",[NSThread currentThread]);  //  2------<NSThread: 0x600003451640>{number = 6, name = (null)}
+                    
+                    
+                });
+            });
+             
+            NSLog(@"5------%@",[NSThread currentThread]);  //  2------<NSThread: 0x600003451640>{number = 6, name = (null)}
+        });
+        
+        for (int i = 0; i< 10; i++) {
+            NSLog(@"6----------%@",[NSThread currentThread]);   //  3----------<NSThread: 0x600003451640>{number = 6, name = (null)}
+        }
     });
+    
+    
+    
+//    dispatch_async(que, ^{
+//
+//        NSLog(@"1-------%@",[NSThread currentThread]);
+//        sleep(2);
+//        dispatch_sync(dispatch_get_main_queue(), ^{  // 主线程
+//
+//            sleep(2);
+//            NSLog(@"2------%@",[NSThread currentThread]);
+//        });
+//        NSLog(@"3----------%@",[NSThread currentThread]);
+//    });
+//
+    
+    
+    
+    
+//    return;
+//    __block int a = 0;
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        a++;
+//        NSLog(@"zhosuhua ------ %d",a);
+//    });
     
     
     
@@ -72,9 +177,9 @@
 //
     
     
-    dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT);
-    [self testGroupEnter];
-    [self testsync1];
+//    dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT);
+//    [self testGroupEnter];
+//    [self testsync1];
  
 //    [self testSemaphore];
 //    [self testSync];
@@ -473,14 +578,14 @@
     });
 }
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-     
-    self.t = [[NSThread alloc] initWithTarget:self.p selector:@selector(testThreadStatus) object:@100];
-    // 2:启动线程
-    [self.t start];
-    self.t.name = @"学习线程";
-    
-}
+//- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+//
+//    self.t = [[NSThread alloc] initWithTarget:self.p selector:@selector(testThreadStatus) object:@100];
+//    // 2:启动线程
+//    [self.t start];
+//    self.t.name = @"学习线程";
+//
+//}
 
 /*
  线程状态演练方法
