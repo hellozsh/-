@@ -27,6 +27,12 @@ public abstract class AbstractList<E> implements List<E> {
      * 添加元素到尾部
      * @param element
      */
+
+    // 复杂度 最好 O(1)  最坏是扩容的时候，扩容方法 O(n)  平均 O(1)+O(1)+...O(1)+O(n) == O(1)
+    /*
+      均摊复杂度: O(n)平均到之前的每个O(1)上，那么之前的O(1)其实是O(2),O(2)也是用O(1)来表示
+      均摊复杂度: 经过连续的多次复杂度比较低的情况后，出现个别复杂度高的情况
+     */
     public void add(E element) {
         add(size, element);
     }

@@ -1,11 +1,8 @@
-import Leetcode.链表.删除重复元素;
-import Leetcode.链表.环形链表;
 import Leetcode.链表.移除链表元素;
 import Link.DynamicArray;
-import Link.LinkedList;
+import Link.SingleLinkedList;
 import Link.List;
-import sun.awt.image.ImageWatched;
-import Leetcode.链表.反转链表;
+import Link.LinkedList;
 
 
 public class Main {
@@ -90,7 +87,21 @@ public class Main {
         System.gc();
     }
 
-   static void testLinkedList(){
+   static void testSingleLinkedList(){
+
+        List<Integer> list = new SingleLinkedList<>();
+        list.add(20);
+        list.add(0, 10);
+        list.add(30);
+        list.add(list.size(), 40);
+
+        System.out.println(list);
+
+        list.remove(1);
+        System.out.println(list);
+    }
+
+    static void testLinkedList(){
 
         List<Integer> list = new LinkedList<>();
         list.add(20);

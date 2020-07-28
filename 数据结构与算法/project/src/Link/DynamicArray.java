@@ -28,6 +28,9 @@ public class DynamicArray<E> extends AbstractList<E> {
             elements[i] = null;
         }
         size = 0;
+
+        // 清空数组后，可以考虑适当缩容
+        elements = (E[]) new Object[DEFAULT_CAPACITY];
     }
 
 
@@ -40,7 +43,7 @@ public class DynamicArray<E> extends AbstractList<E> {
      */
     public E get(int index) {
         rangeCheck(index);
-        return elements[index];
+        return elements[index]; // 复杂度O(1)
     }
 
     /**
@@ -49,7 +52,7 @@ public class DynamicArray<E> extends AbstractList<E> {
      * @param element
      * @return 原来的元素ֵ
      */
-    public E set(int index, E element) {
+    public E set(int index, E element) { // 复杂度O(1)
         rangeCheck(index);
 
         E old = elements[index];
@@ -63,6 +66,11 @@ public class DynamicArray<E> extends AbstractList<E> {
      * @param element
      */
     public void add(int index, E element) {
+        /*
+          最好情况是 往最后面添加元素，也就是index=size的时候，复杂度为O(1)
+          最好情况是 往最前面添加元素，也就是index=0的时候，复杂度O(n)
+          平均情况是 (O(1)+....O(n)) / n = O(n/2) == O(n)
+         */
         rangeCheckForAdd(index);
 
         ensureCapacity(size + 1);
@@ -80,6 +88,12 @@ public class DynamicArray<E> extends AbstractList<E> {
      * @return
      */
     public E remove(int index) {
+        /*
+          最好情况是 往最后面删除元素，也就是index=size-1的时候，复杂度为O(1)
+          最好情况是 往最前面删除元素，也就是index=0的时候，复杂度O(n)
+          平均情况是 (O(1)+....O(n)) / n = O(n/2) == O(n)
+         */
+
         rangeCheck(index);
 
         E old = elements[index];
