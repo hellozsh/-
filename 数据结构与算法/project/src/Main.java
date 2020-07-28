@@ -1,37 +1,12 @@
-import Second.DynamicArray;
+import Leetcode.链表.删除重复元素;
+import Leetcode.链表.环形链表;
+import Leetcode.链表.移除链表元素;
+import Link.DynamicArray;
+import Link.LinkedList;
+import Link.List;
+import sun.awt.image.ImageWatched;
+import Leetcode.链表.反转链表;
 
-import java.util.ArrayList;
-
-class Solution {
-    public int maxCoins(int[] nums) {
-
-        int left = 1;
-        int right = 1;
-        int sum = 0;
-        for (int i = 1; i < nums.length; i++) {
-
-            if (i < nums.length-1) {
-                right = nums[i+1];
-            } else  {
-                right = 1;
-            }
-
-            if (left>=nums[i]) {
-
-            } else {
-
-            }
-            if (left >= nums[i] && right >= nums[i]) {
-                sum += left *nums[i]*right;
-            } else {
-
-            }
-
-        }
-        return 0;
-    }
-
-}
 
 public class Main {
 
@@ -83,7 +58,23 @@ public class Main {
 //            }
 //        });
 
-        ArrayList
+
+        //
+//        testDynamicArray();
+//        testLinkedList();
+
+        testLeetcode();
+
+    }
+
+    static void testLeetcode(){
+
+        移除链表元素 value = new 移除链表元素();
+        value.removeElements(value.testNode(), 1);
+    }
+
+    static void testDynamicArray(){
+
         DynamicArray<Integer> arr = new DynamicArray<>();
 
         arr.add(1);
@@ -97,6 +88,20 @@ public class Main {
 
         // 提醒JVM进行垃圾回收
         System.gc();
+    }
+
+   static void testLinkedList(){
+
+        List<Integer> list = new LinkedList<>();
+        list.add(20);
+        list.add(0, 10);
+        list.add(30);
+        list.add(list.size(), 40);
+
+        System.out.println(list);
+
+        list.remove(1);
+        System.out.println(list);
     }
 
 

@@ -1,18 +1,15 @@
-package Second;
+package Link;
 
 @SuppressWarnings("unchecked")
-public class DynamicArray<E> {
-    /**
-     * 元素的数量
-     */
-    private int size;
+public class DynamicArray<E> extends AbstractList<E> {
+
     /**
      * 所有的元素
      */
     private E[] elements;
 
     private static final int DEFAULT_CAPACITY = 10;
-    private static final int ELEMENT_NOT_FOUND = -1;
+
 
     public DynamicArray(int capaticy) {
         capaticy = (capaticy < DEFAULT_CAPACITY) ? DEFAULT_CAPACITY : capaticy;
@@ -33,38 +30,8 @@ public class DynamicArray<E> {
         size = 0;
     }
 
-    /**
-     * 元素的数量
-     * @return
-     */
-    public int size() {
-        return size;
-    }
 
-    /**
-     * 是否为空
-     * @return
-     */
-    public boolean isEmpty() {
-        return size == 0;
-    }
 
-    /**
-     * 是否包含某个元素
-     * @param element
-     * @return
-     */
-    public boolean contains(E element) {
-        return indexOf(element) != ELEMENT_NOT_FOUND;
-    }
-
-    /**
-     * 添加元素到尾部
-     * @param element
-     */
-    public void add(E element) {
-        add(size, element);
-    }
 
     /**
      * 获取index位置的元素
@@ -169,22 +136,6 @@ public class DynamicArray<E> {
         elements = newElements;
 
         System.out.println(oldCapacity + "扩容为" + newCapacity);
-    }
-
-    private void outOfBounds(int index) {
-        throw new IndexOutOfBoundsException("Index:" + index + ", Size:" + size);
-    }
-
-    private void rangeCheck(int index) {
-        if (index < 0 || index >= size) {
-            outOfBounds(index);
-        }
-    }
-
-    private void rangeCheckForAdd(int index) {
-        if (index < 0 || index > size) {
-            outOfBounds(index);
-        }
     }
 
     @Override
