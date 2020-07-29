@@ -1,7 +1,7 @@
 package Link;
 
 // 双向链表
-public class LinkedList<E> extends AbstractList<E> {
+public class LoopLinkedList<E> extends AbstractList<E> {
 
     private Node<E> first;
     private Node<E> last;
@@ -75,24 +75,25 @@ public class LinkedList<E> extends AbstractList<E> {
         if (index == size) { // 往最后面添加元素
 
             Node oldLast = last;
-            last = new Node<>(element, null, last);
-            if (oldLast == null) {
+            last = new Node<>(element, first, last);
+            if (oldLast == null) { // 这是链表的第一个元素
 
-                first = last ;
+                first = last;
+                first.prev = first;
+                first.next = first;
             } else {
                 oldLast.next = last;
+                first.prev = last;
             }
-            last.next = new Node<>(element, null, last);
-            last = last.next;
         } else {
             Node next = node(index);
             Node prev = next.prev;
             Node node = new Node(element,next,prev);
 
             next.prev = node;
-            if (prev != null) {
-                prev.next = node;
-            } else {
+            prev.next = node;
+
+            if (index == 0) {
                 first = node;
             }
         }
@@ -107,20 +108,24 @@ public class LinkedList<E> extends AbstractList<E> {
         rangeCheck(index);
 
         Node<E> node = node(index);
-        if (node.prev == null) { // index == 0
-
-            first = node.next;
+        if (size == 1) {
+            first = null;
+            last = null;
         } else {
-            node.prev.next = node.next;
+            if (index == 0) { // index == 0
+
+                first = node.next;
+            } else {
+                node.prev.next = node.next;
+            }
+
+            if (index == size-1) { // index = size-1
+
+                last = node.prev;
+            } else {
+                node.next.prev = node.prev;
+            }
         }
-
-        if (node.next == null) { // index = size-1
-
-            last = node.prev;
-        } else {
-            node.next.prev = node.prev;
-        }
-
         size--;
         return node.element;
     }
