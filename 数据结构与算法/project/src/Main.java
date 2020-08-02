@@ -7,6 +7,7 @@ import 结构体实现.链表.单向链表;
 import 结构体实现.链表.双向循环链表;
 import 结构体实现.链表.双向链表;
 import 结构体实现.链表.抽象类;
+import 结构体实现.队列.循环双端队列;
 import 结构体实现.队列.循环队列;
 import 结构体实现.队列.队列;
 import 结构体实现.队列.双端队列;
@@ -89,7 +90,8 @@ public class Main {
 
 //        test队列();
 //        test双端队列();
-        test循环队列();
+//        test循环队列();
+        test循环双端队列();
     }
 
     static void test队列() {
@@ -139,6 +141,27 @@ public class Main {
         System.out.println(queue);
         while (!queue.isEmpty()) {
             System.out.println(queue.deQueue());
+        }
+    }
+
+    static void test循环双端队列() {
+
+        循环双端队列<Integer> queue = new 循环双端队列<>();
+        for (int i = 0; i < 10; i++) {
+            queue.enQueueFront(i+1);
+            queue.enQueueRear(i+100);
+        }
+        for (int i = 0; i < 3; i++) {
+            queue.deQueueFront();
+            queue.deQueueRear();
+        }
+
+        System.out.println(queue);
+        queue.enQueueFront(11);
+        queue.enQueueFront(12);
+        System.out.println(queue);
+        while (!queue.isEmpty()) {
+            System.out.println(queue.deQueueFront());
         }
     }
 
