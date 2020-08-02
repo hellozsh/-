@@ -1,9 +1,15 @@
-import Leetcode.链表.移除链表元素;
+import Leetcode.链表.栈.有效的括号;
 import Link.DynamicArray;
 import Link.SingleLinkedList;
 import Link.List;
 import Link.LinkedList;
-
+import 结构体实现.链表.单向链表;
+import 结构体实现.链表.双向循环链表;
+import 结构体实现.链表.双向链表;
+import 结构体实现.链表.抽象类;
+import 结构体实现.队列.循环队列;
+import 结构体实现.队列.队列;
+import 结构体实现.队列.双端队列;
 
 public class Main {
 
@@ -30,7 +36,6 @@ public class Main {
         }
         return second;
     }
-
     // 线性代数解法
     public static int fib3(int n) {
         double c = Math.sqrt(5);
@@ -60,26 +65,112 @@ public class Main {
 //        testDynamicArray();
 //        testLinkedList();
 
-        testLeetcode();
+//        testLeetcode();
+        test结构体实现();
 
     }
 
     static void testLeetcode(){
 
-        移除链表元素 value = new 移除链表元素();
-        value.removeElements(value.testNode(), 1);
+        有效的括号 value = new 有效的括号();
+        value.isValid("()");
     }
+
+    static void test结构体实现(){
+
+
+        单向链表<Integer> arr1 = new 单向链表<>();
+
+        双向链表<Integer> arr2 = new 双向链表<>();
+
+        双向循环链表<Integer> arr3 = new 双向循环链表<>();
+
+//        test链表(arr3);
+
+//        test队列();
+//        test双端队列();
+        test循环队列();
+    }
+
+    static void test队列() {
+
+        队列<Integer> queue = new 队列<>();
+
+        queue.enQueue(11);
+        queue.enQueue(22);
+        queue.enQueue(33);
+        queue.enQueue(44);
+
+        while (!queue.isEmpty()) {
+            System.out.println(queue.deQueue());
+        }
+    }
+
+    static void test双端队列() {
+
+        双端队列<Integer> queue = new 双端队列<>();
+
+        queue.enQueueFront(11);
+        queue.enQueueFront(22);
+        queue.enQueueRear(33);
+        queue.enQueueRear(44);
+
+        System.out.println(queue); // 尾 44 33 11 22 头
+
+        while (!queue.isEmpty()) {
+            System.out.println(queue.deQueueFront());
+        }
+    }
+
+    static void test循环队列() {
+
+        循环队列<Integer> queue = new 循环队列<>();
+        for (int i = 0; i < 10; i++) {
+            queue.enQueue(i);
+        }
+        for (int i = 0; i < 5; i++) {
+            queue.deQueue();
+        }
+        for (int i = 15; i < 20; i++) {
+            queue.enQueue(i);
+        }
+        System.out.println(queue);
+        queue.enQueue(20);
+        System.out.println(queue);
+        while (!queue.isEmpty()) {
+            System.out.println(queue.deQueue());
+        }
+    }
+
+    static void test链表(抽象类 arr){
+
+        arr.add(1);
+        arr.add(3);
+        arr.add(1,2);
+        arr.add(4);  // 1, 2, 3, 4
+        arr.remove(1); // 1, 3, 4
+        arr.remove();  // 1,3
+        arr.set(0, 6);  // 6,3
+        arr.add(arr.size(), 7); // 6,3,7
+        System.out.println(arr.indexOf(3) == 1);  // true
+        System.out.println(arr.contains(3));  // true
+        System.out.println(arr.get(0));  // 6
+
+        System.out.println(arr);
+    }
+
 
     static void testDynamicArray(){
 
         DynamicArray<Integer> arr = new DynamicArray<>();
 
         arr.add(1);
-        arr.add(2);
         arr.add(3);
-        arr.add(5);
+        arr.add(1,2);
+        arr.add(4);
 
-        arr.add(2,4);
+        arr.remove(1);
+
 
         System.out.println(arr.toString());
 
