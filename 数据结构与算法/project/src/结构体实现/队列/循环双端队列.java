@@ -66,8 +66,18 @@ public class 循环双端队列<E> {
         return elements[rearIndex()];
     }
 
+    /*
+      尽量避免使用乘*、除/、摸%、浮点数运算，效率低下
+     */
     public int rearIndex(){
-        return ((front+size) % elements.length);
+
+        // 因为front + size最大不会是大到elements.length的2倍，所以用这种方式效率会比取模高
+        if (front + size < elements.length) {
+            return front+size;
+        } else {
+           return front + size - elements.length;
+        }
+//        return ((front+size) % elements.length);
     }
 
     @Override
