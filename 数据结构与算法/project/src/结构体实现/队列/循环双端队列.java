@@ -58,6 +58,15 @@ public class 循环双端队列<E> {
         return rearElement;
     }
 
+    public void clear() {
+
+        size = 0;
+        for (int i = 0; i < elements.length; i++){
+            elements[i] = null;
+        }
+        front = 0;
+    }
+
     public E front() {
         return elements[front];
     }

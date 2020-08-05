@@ -1,4 +1,7 @@
 import Leetcode.链表.栈.有效的括号;
+import Leetcode.链表.栈.括号的分数;
+import Leetcode.链表.栈.逆波兰表示法;
+import Leetcode.链表.栈.基本计算器;
 import Link.DynamicArray;
 import Link.SingleLinkedList;
 import Link.List;
@@ -66,15 +69,25 @@ public class Main {
 //        testDynamicArray();
 //        testLinkedList();
 
-//        testLeetcode();
-        test结构体实现();
+        testLeetcode();
+//        test结构体实现();
 
     }
 
     static void testLeetcode(){
 
         有效的括号 value = new 有效的括号();
-        value.isValid("()");
+//        value.isValid("()");
+
+        括号的分数 value1 = new 括号的分数();
+//        value1.scoreOfParentheses("(()(()))");
+
+        逆波兰表示法 value2 = new 逆波兰表示法();
+        String[] list = {"4","13","5","/","+"};
+//        value2.evalRPN(list);
+
+        基本计算器 value3 = new 基本计算器();
+        value3.calculate(" 2-1 + 2 ");
     }
 
     static void test结构体实现(){

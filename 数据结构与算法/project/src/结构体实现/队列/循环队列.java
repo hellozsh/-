@@ -43,6 +43,15 @@ public class 循环队列<E> {
         return elements[front];
     }
 
+    public void clear() {
+
+        size = 0;
+        front = 0;
+        for (int i = 0; i < elements.length; i++){
+            elements[i] = null;
+        }
+    }
+
     @Override
     public String toString() {
         return "循环队列{" +

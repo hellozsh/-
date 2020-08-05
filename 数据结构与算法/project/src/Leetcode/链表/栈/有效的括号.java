@@ -1,8 +1,8 @@
 package Leetcode.链表.栈;
 
-
 import java.util.Stack;
 
+// https://leetcode-cn.com/problems/valid-parentheses/
 public class 有效的括号 {
 
     public boolean isValid(String s) {
