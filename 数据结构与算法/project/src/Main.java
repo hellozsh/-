@@ -1,3 +1,5 @@
+import Leetcode.树.二叉树的前序遍历;
+import Leetcode.树.从前序和中序遍历序列构造二叉树;
 import Leetcode.链表.栈.有效的括号;
 import Leetcode.链表.栈.括号的分数;
 import Leetcode.链表.栈.逆波兰表示法;
@@ -6,14 +8,21 @@ import Link.DynamicArray;
 import Link.SingleLinkedList;
 import Link.List;
 import Link.LinkedList;
+import com.sun.source.tree.BinaryTree;
+import sun.tools.jconsole.inspector.XObject;
+import 结构体实现.树.Person;
+import 结构体实现.树.printer.BinaryTrees;
 import 结构体实现.链表.单向链表;
 import 结构体实现.链表.双向循环链表;
 import 结构体实现.链表.双向链表;
 import 结构体实现.链表.抽象类;
-import 结构体实现.队列.循环双端队列;
-import 结构体实现.队列.循环队列;
-import 结构体实现.队列.队列;
-import 结构体实现.队列.双端队列;
+import 结构体实现.链表.队列.循环双端队列;
+import 结构体实现.链表.队列.循环队列;
+import 结构体实现.链表.队列.队列;
+import 结构体实现.链表.队列.双端队列;
+import 结构体实现.树.二叉搜索树;
+
+import java.util.Comparator;
 
 public class Main {
 
@@ -45,11 +54,9 @@ public class Main {
         double c = Math.sqrt(5);
         return (int)((Math.pow((1+c)/2,n) - Math.pow((1-c)/2,n))/c);
     }
-
     // 0 1 1 2 3 5 8
     public static  void main(String[] args) {
         System.out.println("hello world!");
-
 //        int n = 20;
 //        Times.test("fib1", new Times.Task() {
 //            @Override
@@ -63,7 +70,6 @@ public class Main {
 //                System.out.println(fib2(n));
 //            }
 //        });
-
 
         //
 //        testDynamicArray();
@@ -87,11 +93,22 @@ public class Main {
 //        value2.evalRPN(list);
 
         基本计算器 value3 = new 基本计算器();
-        value3.calculate(" 2-1 + 2 ");
+//        System.out.println(value3.stackCalculate("1-11"));
+
+        从前序和中序遍历序列构造二叉树 value4 = new 从前序和中序遍历序列构造二叉树();
+//        从前序和中序遍历序列构造二叉树.TreeNode node =value4.buildTree(new int[]{3, 9, 20, 15, 7}, new int[]{9, 3, 15, 20, 7});
+//        System.out.println(node);
+
+
+
+
+        二叉树的前序遍历 value5 = new 二叉树的前序遍历();
+        二叉树的前序遍历.TreeNode root = value5.testNode();
+
+        value5.preorderTraversal(root);
     }
 
     static void test结构体实现(){
-
 
         单向链表<Integer> arr1 = new 单向链表<>();
 
@@ -100,11 +117,61 @@ public class Main {
         双向循环链表<Integer> arr3 = new 双向循环链表<>();
 
 //        test链表(arr3);
-
 //        test队列();
 //        test双端队列();
 //        test循环队列();
-        test循环双端队列();
+//        test循环双端队列();
+        test搜索二叉树();
+    }
+
+    static void test搜索二叉树() {
+        Integer data[] = new Integer[] {
+                7,4,9,2,5,8,11,1,3,10,12
+        };
+        二叉搜索树 bst = new 二叉搜索树();
+        for (int i = 0; i < data.length; i++) {
+            bst.add(data[i]);
+        }
+        bst.add(12);
+        bst.add(11);
+        BinaryTrees.println(bst);
+
+        System.out.println("--------前序--------");
+        bst.preorderTraversal();
+        System.out.println("--------中序--生序--------");
+        bst.inorderTraversalASC();
+        System.out.println("--------中序--降序--------");
+        bst.inorderTraversalDSC();
+        System.out.println("--------后序--------");
+        bst.postorderTraversal();
+        System.out.println("--------层序--------");
+        bst.levelorderTraversal();
+
+        bst.levelorderTraversal(new 二叉搜索树.Visitor() {
+            @Override
+            public void visit(Object element) {
+                System.out.print("_"+element+"_");
+            }
+        });
+
+        System.out.println(bst);
+
+        System.out.println(bst.heightDieDai());
+        System.out.println(bst.heightDiGui());
+
+        System.out.println(bst.isComplete());
+//        二叉搜索树 bst1 = new 二叉搜索树(new Comparator<Person>() {
+//            @Override
+//            public int compare(Person o1, Person o2) {
+//                return o2.getAge()-o1.getAge();
+//            }
+//        });
+//        bst1.add(new Person(12));
+//        bst1.add(new Person(15));
+//
+//        二叉搜索树 bst2 = new 二叉搜索树();
+//        bst2.add(new Person(12));
+//        bst2.add(new Person(15));
     }
 
     static void test队列() {

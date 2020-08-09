@@ -1,4 +1,4 @@
-package 结构体实现.栈;
+package 结构体实现.链表.栈;
 import 结构体实现.链表.双向链表;
 
 public class 栈<E> {

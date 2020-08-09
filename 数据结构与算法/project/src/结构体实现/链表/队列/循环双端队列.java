@@ -1,4 +1,4 @@
-package 结构体实现.队列;
+package 结构体实现.链表.队列;
 
 import java.util.Arrays;
 
@@ -60,11 +60,11 @@ public class 循环双端队列<E> {
 
     public void clear() {
 
-        size = 0;
         for (int i = 0; i < elements.length; i++){
             elements[i] = null;
         }
         front = 0;
+        size = 0;
     }
 
     public E front() {
