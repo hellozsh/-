@@ -12,6 +12,7 @@ import com.sun.source.tree.BinaryTree;
 import sun.tools.jconsole.inspector.XObject;
 import 结构体实现.树.Person;
 import 结构体实现.树.printer.BinaryTrees;
+import 结构体实现.树.重构二叉树.树;
 import 结构体实现.链表.单向链表;
 import 结构体实现.链表.双向循环链表;
 import 结构体实现.链表.双向链表;
@@ -75,8 +76,8 @@ public class Main {
 //        testDynamicArray();
 //        testLinkedList();
 
-        testLeetcode();
-//        test结构体实现();
+//        testLeetcode();
+        test结构体实现();
 
     }
 
@@ -125,15 +126,24 @@ public class Main {
     }
 
     static void test搜索二叉树() {
+
         Integer data[] = new Integer[] {
                 7,4,9,2,5,8,11,1,3,10,12
         };
-        二叉搜索树 bst = new 二叉搜索树();
+//        二叉搜索树 bst = new 二叉搜索树();
+      结构体实现.树.重构二叉树.二叉搜索树 bst = new 结构体实现.树.重构二叉树.二叉搜索树();
         for (int i = 0; i < data.length; i++) {
             bst.add(data[i]);
         }
         bst.add(12);
         bst.add(11);
+        BinaryTrees.println(bst);
+
+        bst.remove(9);
+        bst.remove(1);
+        bst.remove(5);
+        bst.remove(12);
+
         BinaryTrees.println(bst);
 
         System.out.println("--------前序--------");
@@ -147,7 +157,7 @@ public class Main {
         System.out.println("--------层序--------");
         bst.levelorderTraversal();
 
-        bst.levelorderTraversal(new 二叉搜索树.Visitor() {
+        bst.levelorderTraversal(new 树.Visitor() {
             @Override
             public void visit(Object element) {
                 System.out.print("_"+element+"_");

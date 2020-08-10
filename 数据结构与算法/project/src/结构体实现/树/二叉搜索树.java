@@ -10,8 +10,6 @@ import java.util.Queue;
 
 public class 二叉搜索树<E> implements BinaryTreeInfo {
 
-
-
     private static class Node<E> {
       E element;
       Node<E> left;
@@ -58,8 +56,8 @@ public class 二叉搜索树<E> implements BinaryTreeInfo {
         return size == 0;
     }
     public void clear() {
-
-
+        root = null;
+        size = 0;
     }
     public void add(E element) {
 
@@ -105,10 +103,63 @@ public class 二叉搜索树<E> implements BinaryTreeInfo {
     }
     public void remove(E element) {
 
-
+        remove(node(element));
     }
+
+    private void remove(Node<E> node) {
+
+        if (node == null) return;
+
+        // 度为2的节点, 找到前驱节点，用前驱节点的值覆盖当前node的值
+        // 再将那个前驱节点删掉
+        // 也可以用后继节点值来当下一个node的值
+        // 一个node的前驱后继节点肯定是度为1或0的节点
+        if (node.hasTwoChildren()) {
+            Node<E> pre = predecessorNode(node);
+            node.element = pre.element;
+            node = pre;
+        }
+
+        // 删除node节点(走到这里node的度肯定为0或者1)
+        Node<E> replacementNode = node.left != null ? node.left : node.right;
+        if (replacementNode != null) { // node是度为1的节点
+            replacementNode.parent = node.parent;
+            if (node.parent == null) {
+                root = replacementNode;
+            } else if (node == node.parent.left) {
+                node.parent.left = replacementNode;
+            } else if (node == node.parent.right) {
+                node.parent.right = replacementNode;
+            }
+        } else if (node.parent == null){ // node是叶子节点并且是根节点
+            root = null;
+        } else { // node是叶子节点、但不是根节点
+            if (node == node.parent.right) {
+                node.parent.right = null;
+            } else {
+                node.parent.left = null;
+            }
+        }
+
+
+        size--;
+    }
+    private Node<E> node(E element) {
+        Node<E> node = root;
+        while (node != null) {
+            int cmp = compare(element, node.element);
+            if(cmp == 0) return node;
+            if (cmp > 0) {
+                node = node.right;
+            } else {
+                node = node.left;
+            }
+        }
+        return null;
+    }
+
     public boolean contains(E element) {
-        return false;
+        return node(element) != null;
     }
 
     private void elementNotNullCheck(E element) {
@@ -124,7 +175,7 @@ public class 二叉搜索树<E> implements BinaryTreeInfo {
         Node<E> p = node.left;
         if (p != null) {
 
-            while (p != null) {
+            while (p.right != null) {
                 p = p.right;
             }
             return p;
@@ -326,12 +377,13 @@ public class 二叉搜索树<E> implements BinaryTreeInfo {
 
     @Override
     public Object string(Object node) {
-        return ((Node<E>)node).element;
+        String str = ((Node<E>)node).parent != null ? ((Node<E>)node).parent.element.toString() :"null";
+
+        return ((Node<E>)node).element+"_"+"P("+str+")";
     }
 
     @Override
     public String toString() {
-
 
         StringBuilder sb = new StringBuilder();
         toString(root, sb,"");
