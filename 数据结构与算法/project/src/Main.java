@@ -1,4 +1,6 @@
+import Leetcode.树.二叉树的中序遍历;
 import Leetcode.树.二叉树的前序遍历;
+import Leetcode.树.二叉树的后序遍历;
 import Leetcode.树.从前序和中序遍历序列构造二叉树;
 import Leetcode.链表.栈.有效的括号;
 import Leetcode.链表.栈.括号的分数;
@@ -6,8 +8,8 @@ import Leetcode.链表.栈.逆波兰表示法;
 import Leetcode.链表.栈.基本计算器;
 import Link.DynamicArray;
 import Link.SingleLinkedList;
-import Link.List;
 import Link.LinkedList;
+import Link.List;
 import com.sun.source.tree.BinaryTree;
 import sun.tools.jconsole.inspector.XObject;
 import 结构体实现.树.Person;
@@ -24,6 +26,7 @@ import 结构体实现.链表.队列.双端队列;
 import 结构体实现.树.二叉搜索树;
 
 import java.util.Comparator;
+//import java.util.List;
 
 public class Main {
 
@@ -76,8 +79,8 @@ public class Main {
 //        testDynamicArray();
 //        testLinkedList();
 
-//        testLeetcode();
-        test结构体实现();
+        testLeetcode();
+//        test结构体实现();
 
     }
 
@@ -106,7 +109,19 @@ public class Main {
         二叉树的前序遍历 value5 = new 二叉树的前序遍历();
         二叉树的前序遍历.TreeNode root = value5.testNode();
 
-        value5.preorderTraversal(root);
+//        value5.preorderTraversal(root);
+
+        二叉树的中序遍历 value6 = new 二叉树的中序遍历();
+        二叉树的中序遍历.TreeNode root1 = value6.testNode();
+
+//        value6.inorderTraversal(root1);
+
+
+        二叉树的后序遍历 value7 = new 二叉树的后序遍历();
+        二叉树的后序遍历.TreeNode root2 = value7.testNode();
+
+        java.util.List<Integer> postorderList = value7.postorderTraversal(root2);
+      System.out.println(postorderList.toString());
     }
 
     static void test结构体实现(){
