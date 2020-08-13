@@ -1,7 +1,4 @@
-import Leetcode.树.二叉树的中序遍历;
-import Leetcode.树.二叉树的前序遍历;
-import Leetcode.树.二叉树的后序遍历;
-import Leetcode.树.从前序和中序遍历序列构造二叉树;
+import Leetcode.树.*;
 import Leetcode.链表.栈.有效的括号;
 import Leetcode.链表.栈.括号的分数;
 import Leetcode.链表.栈.逆波兰表示法;
@@ -118,10 +115,24 @@ public class Main {
 
 
         二叉树的后序遍历 value7 = new 二叉树的后序遍历();
-        二叉树的后序遍历.TreeNode root2 = value7.testNode();
+//        二叉树的后序遍历.TreeNode root2 = value7.testNode();
+//
+//        java.util.List<Integer> postorderList = value7.postorderTraversal(root2);
+//      System.out.println(postorderList.toString());
 
-        java.util.List<Integer> postorderList = value7.postorderTraversal(root2);
-      System.out.println(postorderList.toString());
+
+        二叉树的层序遍历 value8 = new 二叉树的层序遍历();
+//        二叉树的层序遍历.TreeNode root3 = value8.testNode();
+//
+//        java.util.List<java.util.List<Integer>> list8 = value8.levelOrder(root3);
+//        System.out.println(list8.toString());
+
+        二叉树的最大宽度 value9 = new 二叉树的最大宽度();
+        二叉树的最大宽度.TreeNode root9 = value9.testNode();
+
+        int result9 = value9.widthOfBinaryTree(root9);
+        System.out.println(result9);
+
     }
 
     static void test结构体实现(){
