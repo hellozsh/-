@@ -2,7 +2,7 @@ package 结构体实现.树.重构二叉树;
 
 import java.util.Comparator;
 
-public class 二叉搜索树<E> extends 树 {
+public class 二叉搜索树<E> extends 树<E> {
 
      private Comparator<E> comparator;
 
@@ -19,8 +19,9 @@ public class 二叉搜索树<E> extends 树 {
 
         elementNotNullCheck(element);
         if (root == null) {
-            root = new Node<>(element, null);
+            root = createNode(element, null);
             size++;
+            afterAdd(root);
             return;
         }
 
@@ -40,13 +41,23 @@ public class 二叉搜索树<E> extends 树 {
                 return;
             }
         }
-        Node<E> newNode = new Node<>(element, parent);
+        Node<E> newNode = createNode(element, parent);
         if (cmp > 0) {
             parent.right = newNode;
         } else {
             parent.left = newNode;
         }
         size++;
+        afterAdd(node);
+    }
+
+    protected Node<E> createNode(E element, Node<E> parent) {
+
+        return new Node<E>(element, parent);
+    }
+
+    protected void afterAdd(Node<E> node) {
+
     }
 
     private int compare(E e1, E e2) {

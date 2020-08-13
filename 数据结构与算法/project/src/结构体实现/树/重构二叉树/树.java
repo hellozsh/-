@@ -9,7 +9,7 @@ import java.util.LinkedList;
 
 public class 树<E> implements BinaryTreeInfo {
 
-    protected static class Node<E> {
+    protected class Node<E> {
         E element;
         Node<E> left;
         Node<E> right;
@@ -25,6 +25,15 @@ public class 树<E> implements BinaryTreeInfo {
         public boolean hasTwoChildren() {
             return left != null && right != null;
         }
+
+        public boolean isLeftChild() {
+            return parent != null && this == parent.left;
+        }
+
+        public boolean isRightChild() {
+            return parent != null && this == parent.right;
+        }
+
     }
 
     protected int size;
