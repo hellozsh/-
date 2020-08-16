@@ -1,58 +1,56 @@
-package 结构体实现.树.重构二叉树;
+package 结构体实现.树;
 
-import 结构体实现.树.AVL树复习;
-import 结构体实现.树.二叉搜索树复习;
 
-import java.util.Comparator;
+import 结构体实现.树.重构二叉树.AVL树;
+import 结构体实现.树.重构二叉树.树;
 
-public class AVL树<E> extends 二叉搜索树<E> {
+public class AVL树复习<E> extends 二叉搜索树复习<E> {
+
 
     private class AVLNode<E> extends Node<E> {
         int height = 1;
-
         public AVLNode(E element, Node<E> parent) {
             super(element, parent);
         }
 
         public int balanceFactor() {
-            int leftHeight = left == null ? 0: ((AVLNode<E>)left).height;
-            int rightHeight = right == null ? 0: ((AVLNode<E>)right).height;
-
+            int leftHeight = left == null ? 0 : ((AVLNode<E>)left).height;
+            int rightHeight = right == null ? 0 : ((AVLNode<E>)right).height;
             return leftHeight - rightHeight;
         }
 
         public void updateHeight() {
-            int leftHeight = left == null ? 0: ((AVLNode<E>)left).height;
-            int rightHeight = right == null ? 0: ((AVLNode<E>)right).height;
+            int leftHeight = left == null ? 0 : ((AVLNode<E>)left).height;
+            int rightHeight = right == null ? 0 : ((AVLNode<E>)right).height;
 
             height = 1 + Math.max(leftHeight, rightHeight);
         }
 
         public Node<E> tallerChild() {
-            int leftHeight = left == null ? 0: ((AVLNode<E>)left).height;
-            int rightHeight = right == null ? 0: ((AVLNode<E>)right).height;
-            if (leftHeight > rightHeight) return left;
-            if (leftHeight < rightHeight) return right;
-            return isLeftChild() ? left : right;
+
+            int leftHeight = left == null ? 0 : ((AVLNode<E>)left).height;
+            int rightHeight = right == null ? 0 : ((AVLNode<E>)right).height;
+            if (leftHeight > rightHeight) {
+                return left;
+            } else {
+                return right;
+            }
         }
 
     }
 
-    public AVL树() { }
-
-    public AVL树(Comparator<E> comparator) {
-        super(comparator);
-    }
 
 
     @Override
-    protected void afterAdd(Node<E> node) {
-        while ((node = node.parent) != null) {
-            if (isBalanced(node)) {
+    protected void afterAdd(Node<E> newNode) {
+
+        while ((newNode = newNode.parent) != null) {
+            if (isBalanced(newNode)) {
                 // 更新高度
-                updateHeight(node);
+                updateHeight(newNode);
             } else {
-                rebalance(node);
+//                rebalance(newNode);
+                rebalanceAllRotation(newNode);
             }
         }
     }
@@ -91,8 +89,8 @@ public class AVL树<E> extends 二叉搜索树<E> {
     }
 
 
-    private void rotateAllRotation(Node<E> r, // 这个子树的根节点
-                                   Node<E> b, Node<E> c, Node<E> d, Node<E> e, Node<E> f) {
+    private void rotateAllRotation( Node<E> r, // 这个子树的根节点
+                                    Node<E> b, Node<E> c, Node<E> d, Node<E> e, Node<E> f) {
 
         d.parent = r.parent;
         if (r.isLeftChild()) {
@@ -121,63 +119,69 @@ public class AVL树<E> extends 二叉搜索树<E> {
         updateHeight(d);
     }
 
-
     private void rebalance(Node<E> grand) {
+
         Node<E> parent = ((AVLNode<E>)grand).tallerChild();
         Node<E> node = ((AVLNode<E>)parent).tallerChild();
-        if (parent.isLeftChild()) {
-            if (node.isLeftChild()) { // LL
+        if (grand.left == parent) {
+            if (parent.left == node) { // LL
                 rotateRight(grand);
             } else { // LR
+
                 rotateLeft(parent);
                 rotateRight(grand);
             }
         } else {
-            if (node.isLeftChild()) { // RL
+            if (parent.left == node) { // RL
+
                 rotateRight(parent);
                 rotateLeft(grand);
             } else { // RR
+
                 rotateLeft(grand);
             }
         }
     }
 
-    private void rotateLeft(Node<E> grand) {
-        Node<E> parent = grand.right;
-        Node<E> child = parent.left;
-        grand.right = child;
-        parent.left = grand;
+    private void rotateLeft(Node<E> needDeclineNode) { // 需要左边下降的node
 
-        afterRotation(grand, parent, child);
+        Node<E> rightChild = needDeclineNode.right;
+        Node<E> leftChild_rightChild = rightChild.left;
+
+        needDeclineNode.right = leftChild_rightChild;
+        rightChild.left = needDeclineNode;
+
+        // 维护needDeclineNode子树的parent和height
+        afterRotate(needDeclineNode, rightChild, leftChild_rightChild);
     }
 
-    private void rotateRight(Node<E> grand) {
+    private void rotateRight(Node<E> needDeclineNode) { // 需要右边下降的node
 
-        Node<E> parent = grand.left;
-        Node<E> child = parent.right;
-        grand.left = child;
-        parent.right = grand;
+        Node<E> leftChild = needDeclineNode.left;
+        Node<E> rightChild_leftChild = leftChild.right;
 
-        afterRotation(grand, parent, child);
+        needDeclineNode.left = rightChild_leftChild;
+        leftChild.right = needDeclineNode;
+
+        // 维护needDeclineNode子树的parent和height
+        afterRotate(needDeclineNode, leftChild, rightChild_leftChild);
     }
 
-    private void afterRotation(Node<E> grand, Node<E> parent, Node<E> child) {
-        // 让parent成为子树的根节点
-        parent.parent = grand.parent;
+    // 原先的grand、parent、child， grand下降，parent变成最高的点，原来是parent的child变成grand的child
+    // 后，到这里更新parent属性、更新高度
+    protected void afterRotate(Node<E> grand, Node<E> parent, Node<E> child) {
+
         if (grand.isLeftChild()) {
             grand.parent.left = parent;
         } else if (grand.isRightChild()) {
             grand.parent.right = parent;
-        } else { // grand是root节点
+        } else {
             root = parent;
         }
-
-        // 更新child的parent
         if (child != null) {
             child.parent = grand;
         }
-
-        // 更新grand的parent
+        parent.parent = grand.parent;
         grand.parent = parent;
 
         // 更新高度
@@ -185,30 +189,19 @@ public class AVL树<E> extends 二叉搜索树<E> {
         updateHeight(parent);
     }
 
-    private boolean isBalanced(Node<E> node) {
-        return Math.abs(((AVLNode<E>)node).balanceFactor()) <= 1;
-    }
+
     private void updateHeight(Node<E> node) {
         ((AVLNode<E>)node).updateHeight();
     }
 
-    @Override
-    protected Node<E> createNode(E element, Node<E> parent) {
-        return new AVLNode<E>(element, parent);
+    private boolean isBalanced(Node<E> node) {
+
+        return Math.abs(((AVLNode<E>)node).balanceFactor()) <= 1;
     }
 
+
+    @Override
+    protected Node createNode(Object element, Node parent) {
+        return new AVLNode(element, parent);
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

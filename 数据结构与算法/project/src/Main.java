@@ -12,8 +12,10 @@ import Link.LinkedList;
 import Link.List;
 import com.sun.source.tree.BinaryTree;
 import sun.tools.jconsole.inspector.XObject;
+import 结构体实现.树.AVL树复习;
 import 结构体实现.树.Person;
 import 结构体实现.树.printer.BinaryTrees;
+import 结构体实现.树.二叉搜索树复习;
 import 结构体实现.树.重构二叉树.树;
 import 结构体实现.链表.单向链表;
 import 结构体实现.链表.双向循环链表;
@@ -79,8 +81,8 @@ public class Main {
 //        testDynamicArray();
 //        testLinkedList();
 
-        testLeetcode();
-//        test结构体实现();
+//        testLeetcode();
+        test结构体实现();
 
     }
 
@@ -137,7 +139,25 @@ public class Main {
 //        test双端队列();
 //        test循环队列();
 //        test循环双端队列();
-        test搜索二叉树();
+//        test搜索二叉树();
+        testAVL树();
+    }
+
+    static void testAVL树() {
+
+        Integer data[] = new Integer[] {
+                13,14,15,12,11,17,16,8,9,1
+        };
+//        二叉搜索树 bst = new 二叉搜索树();
+//      结构体实现.树.重构二叉树.二叉搜索树 bst = new 结构体实现.树.重构二叉树.二叉搜索树();
+
+        AVL树复习 bst = new 结构体实现.树.AVL树复习();
+
+        for (int i = 0; i < data.length; i++) {
+            bst.add(data[i]);
+            BinaryTrees.println(bst);
+            System.out.println("------------------------");
+        }
     }
 
     static void test搜索二叉树() {
@@ -146,12 +166,17 @@ public class Main {
                 7,4,9,2,5,8,11,1,3,10,12
         };
 //        二叉搜索树 bst = new 二叉搜索树();
-      结构体实现.树.重构二叉树.二叉搜索树 bst = new 结构体实现.树.重构二叉树.二叉搜索树();
+//      结构体实现.树.重构二叉树.二叉搜索树 bst = new 结构体实现.树.重构二叉树.二叉搜索树();
+
+        结构体实现.树.二叉搜索树复习 bst = new 结构体实现.树.二叉搜索树复习();
+
         for (int i = 0; i < data.length; i++) {
             bst.add(data[i]);
         }
+        BinaryTrees.println(bst);
         bst.add(12);
         bst.add(11);
+        System.out.println("------------------------");
         BinaryTrees.println(bst);
 
         bst.remove(9);
@@ -160,32 +185,32 @@ public class Main {
         bst.remove(12);
 
         BinaryTrees.println(bst);
+//
+//        System.out.println("--------前序--------");
+//        bst.preorderTraversal();
+//        System.out.println("--------中序--生序--------");
+//        bst.inorderTraversalASC();
+//        System.out.println("--------中序--降序--------");
+//        bst.inorderTraversalDSC();
+//        System.out.println("--------后序--------");
+//        bst.postorderTraversal();
+//        System.out.println("--------层序--------");
+//        bst.levelorderTraversal();
+//
+//        bst.levelorderTraversal(new 树.Visitor() {
+//            @Override
+//            public void visit(Object element) {
+//                System.out.print("_"+element+"_");
+//            }
+//        });
 
-        System.out.println("--------前序--------");
-        bst.preorderTraversal();
-        System.out.println("--------中序--生序--------");
-        bst.inorderTraversalASC();
-        System.out.println("--------中序--降序--------");
-        bst.inorderTraversalDSC();
-        System.out.println("--------后序--------");
-        bst.postorderTraversal();
-        System.out.println("--------层序--------");
-        bst.levelorderTraversal();
-
-        bst.levelorderTraversal(new 树.Visitor() {
-            @Override
-            public void visit(Object element) {
-                System.out.print("_"+element+"_");
-            }
-        });
-
-        System.out.println(bst);
-
-        System.out.println(bst.heightDieDai());
-        System.out.println(bst.heightDiGui());
-
-        System.out.println(bst.isComplete());
-//        二叉搜索树 bst1 = new 二叉搜索树(new Comparator<Person>() {
+//        System.out.println(bst);
+//
+//        System.out.println(bst.heightDieDai());
+//        System.out.println(bst.heightDiGui());
+//
+//        System.out.println(bst.isComplete());
+////        二叉搜索树 bst1 = new 二叉搜索树(new Comparator<Person>() {
 //            @Override
 //            public int compare(Person o1, Person o2) {
 //                return o2.getAge()-o1.getAge();

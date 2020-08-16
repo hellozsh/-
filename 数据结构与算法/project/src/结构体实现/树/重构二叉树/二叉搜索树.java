@@ -14,7 +14,6 @@ public class 二叉搜索树<E> extends 树<E> {
         this.comparator = comparator;
     }
 
-
     public void add(E element) {
 
         elementNotNullCheck(element);
@@ -106,10 +105,14 @@ public class 二叉搜索树<E> extends 树<E> {
                 node.parent.left = null;
             }
         }
-
-
         size--;
+        afterRemove(node);
     }
+
+    protected void afterRemove(Node<E> node) {
+
+    }
+
     private Node<E> node(E element) {
         Node<E> node = root;
         while (node != null) {

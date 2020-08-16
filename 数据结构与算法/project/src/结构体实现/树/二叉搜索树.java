@@ -5,7 +5,6 @@ import 结构体实现.树.printer.BinaryTreeInfo;
 import java.lang.Comparable;
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.Queue;
 
 
 public class 二叉搜索树<E> implements BinaryTreeInfo {
@@ -406,6 +405,5 @@ public class 二叉搜索树<E> implements BinaryTreeInfo {
         toString(node.left, sb, prefix+"[L]");
         toString(node.right, sb, prefix+"[R]");
     }
-
 }
 
