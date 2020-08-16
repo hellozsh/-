@@ -2,8 +2,6 @@ package 结构体实现.树.重构二叉树;
 
 
 import 结构体实现.树.printer.BinaryTreeInfo;
-import 结构体实现.树.二叉搜索树;
-
 
 import java.util.LinkedList;
 
