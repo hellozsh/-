@@ -32,6 +32,7 @@ public class 树<E> implements BinaryTreeInfo {
             return parent != null && this == parent.right;
         }
 
+
     }
 
     protected int size;
@@ -94,7 +95,7 @@ public class 树<E> implements BinaryTreeInfo {
     }
 
     /// 判断是否是完全二叉树
-    public boolean isComplete() {
+    public boolean isComplete2() {
 
         LinkedList<Node<E>> queue = new LinkedList();
         queue.offer(root);
@@ -112,11 +113,39 @@ public class 树<E> implements BinaryTreeInfo {
             } else {  // 说明遇到了左子树为null、右子树为null或者左子树有值，右子树为null的情况
 
                 leaf = true; // 后面的都需要是叶子节点
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
             }
         }
         return true;
     }
 
+    /// 判断是否是完全二叉树
+    public boolean isComplete() {
+
+        LinkedList<Node<E>> queue = new LinkedList();
+        queue.offer(root);
+
+        boolean leaf = false;
+        while (!queue.isEmpty()) {
+            Node<E> node = queue.poll();
+
+            if (leaf && !node.isLeaf()) return false;
+
+            if (node.left != null) {
+                queue.offer(node.left);
+            } else if (node.right != null) {
+                return false;
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            } else {
+                leaf = true;
+            }
+        }
+        return true;
+    }
 
     /// 前驱节点
     protected Node<E> predecessor(Node<E> node) {
@@ -230,21 +259,29 @@ public class 树<E> implements BinaryTreeInfo {
     }
 
 
-    public static interface Visitor<E> {
-        void visit(E element);
+    public static abstract class Visitor<E> {
+
+        boolean stop;
+        /*
+         @return
+         */
+
+         abstract boolean visit(E element);
     }
 
     public void postorderTraversal(Visitor<E> visitor) {
+        if (visitor == null) return;
         postorderTraversal(root,visitor);
     }
 
     private void postorderTraversal(Node<E> node, Visitor<E> visitor) {
-        if (node == null || visitor == null) {
+        if (node == null || visitor.stop) {
             return;
         }
         postorderTraversal(node.left, visitor);
         postorderTraversal(node.right, visitor);
-        visitor.visit(node.element);
+        if (visitor.stop) return;
+        visitor.stop = visitor.visit(node.element);
     }
 
     public void levelorderTraversal(Visitor<E> visitor) {
@@ -256,7 +293,8 @@ public class 树<E> implements BinaryTreeInfo {
        Node<E> node;
         while (!queue.isEmpty()) {
             node = queue.poll();
-            visitor.visit(node.element);
+            if (visitor.visit(node.element)) return;
+            ;
             if (node.left != null) {
                 queue.add(node.left);
             }

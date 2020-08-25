@@ -133,7 +133,11 @@ public class 二叉搜索树复习<E> implements BinaryTreeInfo {
         if (node == null) return;
 
         if (node.isLeaf()) {
-             removeNode(node);
+            if (node.parent == null) {
+                root = null;
+            } else {
+                removeNode(node);
+            }
              afterRemove(node);
         } else {
             // 需要找到前驱节点
@@ -155,8 +159,8 @@ public class 二叉搜索树复习<E> implements BinaryTreeInfo {
     private Node<E> predecessorNode(Node<E> node) {
         if (node == null) return null;
         Node<E> preNode = node.left;
-        while (preNode.right != null) {
-            preNode = node.right;
+        while (preNode != null && preNode.right != null) {
+            preNode = preNode.right;
         }
         return preNode;
     }
@@ -172,11 +176,29 @@ public class 二叉搜索树复习<E> implements BinaryTreeInfo {
 
     private void removeNode(Node<E> node) {
 
-        int cmp = compare(node.element,node.parent.element);
-        if (cmp > 0) { // 在右边
-            node.parent.right = null;
+        if (node.left != null) {
+            if (node.isLeftChild()) {
+                node.parent.left = node.left;
+                node.left.parent = node.parent;
+            } else if (node.isRightChild()) {
+                node.parent.right = node.left;
+                node.left.parent = node.parent;
+            }
+        } else if (node.right != null) {
+            if (node.isLeftChild()) {
+                node.parent.left = node.right;
+                node.right.parent = node.parent;
+            } else if (node.isRightChild()) {
+                node.parent.right = node.right;
+                node.right.parent = node.parent;
+            }
         } else {
-            node.parent.left = null;
+            int cmp = compare(node.element,node.parent.element);
+            if (cmp > 0) { // 在右边
+                node.parent.right = null;
+            } else {
+                node.parent.left = null;
+            }
         }
     }
 

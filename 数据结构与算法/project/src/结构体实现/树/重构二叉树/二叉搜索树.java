@@ -1,10 +1,73 @@
 package 结构体实现.树.重构二叉树;
 
+import 结构体实现.树.二叉搜索树复习;
+
 import java.util.Comparator;
 
 public class 二叉搜索树<E> extends 树<E> {
+    protected   int size;
+    protected   Node<E> root;
 
-     private Comparator<E> comparator;
+    @Override
+    public Object root() {
+        return root;
+    }
+
+    @Override
+    public Object left(Object node) {
+        return ((Node<E> )node).left;
+    }
+
+    @Override
+    public Object right(Object node) {
+        return ((Node<E> )node).right;
+    }
+
+    @Override
+    public Object string(Object node) {
+
+        String parentStr = "null)";
+        if (((Node<E> )node).parent != null) {
+            parentStr = ((Node<E> )node).parent.element+")";
+        }
+
+        return ((Node<E> )node).element+"_P("+parentStr;
+    }
+
+    protected static class Node<E> {
+        E element;
+        Node<E> left;
+        Node<E> right;
+        Node<E> parent;
+        public Node(E element, Node<E> parent) {
+            this.element = element;
+            this.parent = parent;
+        }
+        /// 是否是叶子节点
+        public boolean isLeaf() {
+            return left == null && right == null;
+        }
+        public boolean hasTwoChildren() {
+            return left != null && right != null;
+        }
+
+        public boolean isLeftChild() {
+            return parent != null && this == parent.left;
+        }
+        public boolean isRightChild() {
+            return parent != null && this == parent.right;
+        }
+        // 叔父节点
+        public Node<E> sibling() {
+            if (isLeftChild()) {
+                return parent.right;
+            }
+            if (isRightChild()) {
+                return parent.left;
+            }
+            return null;
+        }
+    }
 
     public 二叉搜索树() {
         this(null);
@@ -14,9 +77,27 @@ public class 二叉搜索树<E> extends 树<E> {
         this.comparator = comparator;
     }
 
+    private Comparator<E> comparator;
+
+    public int size() {
+        return size;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public void clear() {
+        root = null;
+        size = 0;
+    }
+
+    protected Node<E> createNode(E element, Node<E> parent) {
+        return new Node<>(element, parent);
+    }
+
     public void add(E element) {
 
-        elementNotNullCheck(element);
         if (root == null) {
             root = createNode(element, null);
             size++;
@@ -25,38 +106,128 @@ public class 二叉搜索树<E> extends 树<E> {
         }
 
         Node<E> node = root;
-        Node<E> parent = null;
         int cmp = 0;
+        Node<E> parent = root;
         while (node != null) {
-
-            cmp = compare(element, node.element);
+            cmp = compare(element,node.element);
             parent = node;
-            if (cmp > 0) {
+            if (cmp > 0) { // 在右边
                 node = node.right;
-            } else if (cmp < 0) {
-                node = node.left;
-            } else { // 相等
+            } else if (cmp == 0) { // 相等
                 node.element = element;
                 return;
+            } else {
+                node = node.left;
             }
         }
         Node<E> newNode = createNode(element, parent);
         if (cmp > 0) {
             parent.right = newNode;
-        } else {
+        } else if (cmp < 0) {
             parent.left = newNode;
         }
         size++;
-        afterAdd(node);
-    }
-
-    protected Node<E> createNode(E element, Node<E> parent) {
-
-        return new Node<E>(element, parent);
+        afterAdd(newNode);
     }
 
     protected void afterAdd(Node<E> node) {
 
+    }
+    public void remove(E element) {
+
+        Node<E> node = node(element);
+        if (node == null) return;
+
+        if (node.isLeaf()) {
+            if (node.parent == null) {
+                root = null;
+            } else {
+                removeNode(node);
+            }
+            afterRemove(node);
+        } else {
+            // 需要找到前驱节点--这个前驱是作为这个node的子节点的前驱
+            Node<E> replaceNode = predecessorNode(node);
+            if (replaceNode == null) {
+                // 找到后继节点--这个后继是作为这个node的子节点的后继
+                replaceNode = successor(node);
+            }
+            node.element = replaceNode.element;
+            removeNode(replaceNode);
+            afterRemove(node);
+        }
+    }
+
+    protected void afterRemove(Node<E> node) {
+
+    }
+
+    private Node<E> predecessorNode(Node<E> node) {
+        if (node == null) return null;
+       Node<E> preNode = node.left;
+        while (preNode != null && preNode.right != null) {
+            preNode = preNode.right;
+        }
+        return preNode;
+    }
+
+    private Node<E> successor(Node<E> node) {
+        if (node == null) return null;
+        Node<E> succNode = node.right;
+        while (succNode.left != null) {
+            succNode = node.left;
+        }
+        return succNode;
+    }
+
+    private void removeNode(Node<E> node) {
+
+        if (node.left != null) {
+            if (node.isLeftChild()) {
+                node.parent.left = node.left;
+                node.left.parent = node.parent;
+            } else if (node.isRightChild()) {
+                node.parent.right = node.left;
+                node.left.parent = node.parent;
+            }
+        } else if (node.right != null) {
+            if (node.isLeftChild()) {
+                node.parent.left = node.right;
+                node.right.parent = node.parent;
+            } else if (node.isRightChild()) {
+                node.parent.right = node.right;
+                node.right.parent = node.parent;
+            }
+        } else {
+            int cmp = compare(node.element,node.parent.element);
+            if (cmp > 0) { // 在右边
+                node.parent.right = null;
+            } else {
+                node.parent.left = null;
+            }
+        }
+    }
+
+
+    public boolean contains(E element) {
+        return node(element) != null;
+    }
+
+    private Node<E> node(E element) {
+
+        Node<E> node = root;
+        int cmp = 0;
+        while (node != null) {
+            cmp = compare(element,node.element);
+            if (cmp > 0) { // 在右边
+                node = node.right;
+            } else if (cmp == 0) { // 相等
+                return node;
+            } else {
+                node = node.left;
+            }
+        }
+        return null;
     }
 
     private int compare(E e1, E e2) {
@@ -66,68 +237,6 @@ public class 二叉搜索树<E> extends 树<E> {
         }
         return ((Comparable<E>)e1).compareTo(e2);
     }
-    public void remove(E element) {
 
-        remove(node(element));
-    }
 
-    private void remove(Node<E> node) {
-
-        if (node == null) return;
-
-        // 度为2的节点, 找到前驱节点，用前驱节点的值覆盖当前node的值
-        // 再将那个前驱节点删掉
-        // 也可以用后继节点值来当下一个node的值
-        // 一个node的前驱后继节点肯定是度为1或0的节点
-        if (node.hasTwoChildren()) {
-            Node<E> pre = predecessor(node);
-            node.element = pre.element;
-            node = pre;
-        }
-
-        // 删除node节点(走到这里node的度肯定为0或者1)
-        Node<E> replacementNode = node.left != null ? node.left : node.right;
-        if (replacementNode != null) { // node是度为1的节点
-            replacementNode.parent = node.parent;
-            if (node.parent == null) {
-                root = replacementNode;
-            } else if (node == node.parent.left) {
-                node.parent.left = replacementNode;
-            } else if (node == node.parent.right) {
-                node.parent.right = replacementNode;
-            }
-        } else if (node.parent == null){ // node是叶子节点并且是根节点
-            root = null;
-        } else { // node是叶子节点、但不是根节点
-            if (node == node.parent.right) {
-                node.parent.right = null;
-            } else {
-                node.parent.left = null;
-            }
-        }
-        size--;
-        afterRemove(node);
-    }
-
-    protected void afterRemove(Node<E> node) {
-
-    }
-
-    private Node<E> node(E element) {
-        Node<E> node = root;
-        while (node != null) {
-            int cmp = compare(element, node.element);
-            if(cmp == 0) return node;
-            if (cmp > 0) {
-                node = node.right;
-            } else {
-                node = node.left;
-            }
-        }
-        return null;
-    }
-
-    public boolean contains(E element) {
-        return node(element) != null;
-    }
 }
