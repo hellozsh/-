@@ -1,5 +1,8 @@
 package 结构体实现.树.重构二叉树;
 
+import 结构体实现.树.AVL树复习;
+import 结构体实现.树.二叉搜索树复习;
+
 public class AVL树<E> extends 二叉平衡树<E> {
 
 
@@ -62,28 +65,6 @@ public class AVL树<E> extends 二叉平衡树<E> {
         }
     }
 
-    // 统一所有旋转操作
-    private void rebalanceAllRotation(Node<E> grand) {
-
-        Node<E> parent = ((AVLNode<E>)grand).tallerChild();
-        Node<E> node = ((AVLNode<E>)parent).tallerChild();
-        if (grand.left == parent) {
-            if (parent.left == node) { // LL
-                rotateAllRotation(grand,node,node.right, parent, parent.right, grand);
-            } else { // LR
-                rotateAllRotation(grand,parent,node.left, node, node.right, grand);
-            }
-        } else {
-            if (parent.left == node) { // RL
-
-                rotateAllRotation(grand,grand,node.left, node, node.right, grand);
-            } else { // RR
-                rotateAllRotation(grand,grand,parent.left, parent, node.left, node);
-            }
-        }
-    }
-
-
 
     private void rebalance(Node<E> grand) {
 
@@ -108,6 +89,28 @@ public class AVL树<E> extends 二叉平衡树<E> {
             }
         }
     }
+
+    // 统一所有旋转操作
+    private void rebalanceAllRotation(Node<E> grand) {
+
+        Node<E> parent = ((AVLNode<E>)grand).tallerChild();
+        Node<E> node = ((AVLNode<E>)parent).tallerChild();
+        if (grand.left == parent) {
+            if (parent.left == node) { // LL
+                rotateAllRotation(grand,node,node.right, parent, parent.right, grand);
+            } else { // LR
+                rotateAllRotation(grand,parent,node.left, node, node.right, grand);
+            }
+        } else {
+            if (parent.left == node) { // RL
+
+                rotateAllRotation(grand,grand,node.left, node, node.right, parent);
+            } else { // RR
+                rotateAllRotation(grand,grand,parent.left, parent, node.left, node);
+            }
+        }
+    }
+
 
     private void updateHeight(Node<E> node) {
         ((AVLNode<E>)node).updateHeight();

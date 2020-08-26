@@ -133,6 +133,7 @@ public class 二叉搜索树<E> extends 树<E> {
     protected void afterAdd(Node<E> node) {
 
     }
+
     public void remove(E element) {
 
         Node<E> node = node(element);
@@ -146,22 +147,21 @@ public class 二叉搜索树<E> extends 树<E> {
             }
             afterRemove(node);
         } else {
-            // 需要找到前驱节点--这个前驱是作为这个node的子节点的前驱
+            // 需要找到前驱节点
             Node<E> replaceNode = predecessorNode(node);
             if (replaceNode == null) {
-                // 找到后继节点--这个后继是作为这个node的子节点的后继
+                // 找到后继节点
                 replaceNode = successor(node);
             }
             node.element = replaceNode.element;
             removeNode(replaceNode);
-            afterRemove(node);
+            afterRemove(replaceNode);
         }
     }
 
     protected void afterRemove(Node<E> node) {
 
     }
-
     private Node<E> predecessorNode(Node<E> node) {
         if (node == null) return null;
        Node<E> preNode = node.left;

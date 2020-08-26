@@ -81,7 +81,7 @@ public class AVL树复习<E> extends 二叉搜索树复习<E> {
         } else {
             if (parent.left == node) { // RL
 
-                rotateAllRotation(grand,grand,node.left, node, node.right, grand);
+                rotateAllRotation(grand,grand,node.left, node, node.right, parent);
             } else { // RR
                 rotateAllRotation(grand,grand,parent.left, parent, node.left, node);
             }

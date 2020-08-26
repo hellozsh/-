@@ -160,9 +160,9 @@ public class Main {
                 13,14,15,12,11,17,16,8,9,1
         };
 //        二叉搜索树 bst = new 二叉搜索树();
-//      结构体实现.树.重构二叉树.AVL树 bst = new  结构体实现.树.重构二叉树.AVL树();
+      结构体实现.树.重构二叉树.AVL树 bst = new  结构体实现.树.重构二叉树.AVL树();
 
-        AVL树复习 bst = new 结构体实现.树.AVL树复习();
+//        AVL树复习 bst = new 结构体实现.树.AVL树复习();
 
         for (int i = 0; i < data.length; i++) {
             bst.add(data[i]);

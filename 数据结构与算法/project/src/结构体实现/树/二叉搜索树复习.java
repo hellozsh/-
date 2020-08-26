@@ -148,7 +148,7 @@ public class 二叉搜索树复习<E> implements BinaryTreeInfo {
             }
             node.element = replaceNode.element;
             removeNode(replaceNode);
-            afterRemove(node);
+            afterRemove(replaceNode);
         }
     }
 

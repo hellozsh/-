@@ -1,4 +1,7 @@
 package 结构体实现.树.重构二叉树;
+import 结构体实现.树.AVL树复习;
+import 结构体实现.树.二叉搜索树复习;
+
 import java.util.Comparator;
 
 public class 二叉平衡树<E> extends 二叉搜索树<E> {
