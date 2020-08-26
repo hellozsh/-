@@ -151,7 +151,51 @@ public class Main {
 //        test循环队列();
 //        test循环双端队列();
 //        test搜索二叉树();
-        testAVL树();
+//        testAVL树();
+        test红黑树();
+    }
+
+    static void test红黑树() {
+
+        Integer data[] = new Integer[] {
+                7,4,9,2,5,8,11,1,3,10,12,13,14
+        };
+        结构体实现.树.重构二叉树.红黑树 bst = new 结构体实现.树.重构二叉树.红黑树();
+
+        for (int i = 0; i < data.length; i++) {
+            bst.add(data[i]);
+        }
+
+        BinaryTrees.println(bst);
+//        bst.remove(1);
+//        BinaryTrees.println(bst);
+//        bst.remove(9);
+//        BinaryTrees.println(bst);
+//        bst.remove(1);
+//        BinaryTrees.println(bst);
+//        bst.remove(5);
+//        BinaryTrees.println(bst);
+//        bst.remove(10);
+//        BinaryTrees.println(bst);
+//
+//        bst.remove(4);
+//        BinaryTrees.println(bst);
+//        bst.remove(7);
+//        BinaryTrees.println(bst);
+//        bst.remove(2);
+//        BinaryTrees.println(bst);
+//        bst.remove(8);
+//        BinaryTrees.println(bst);
+//        bst.remove(3);
+//        BinaryTrees.println(bst);
+//
+//        bst.remove(12);
+//        BinaryTrees.println(bst);
+//
+//        System.out.println("-----------");
+//        bst.remove(11);
+//        BinaryTrees.println(bst);
+//        System.out.println("-----------");
     }
 
     static void testAVL树() {

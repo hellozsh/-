@@ -11,7 +11,6 @@ public class 红黑树<E> extends 二叉平衡树<E>  {
         super(comparator);
     }
 
-
     @Override
     protected void afterAdd(Node<E> node) {
         Node<E> parent = node.parent;
@@ -60,6 +59,7 @@ public class 红黑树<E> extends 二叉平衡树<E>  {
 
     @Override
     protected void afterRemove(Node<E> node) {
+
 
     }
 
@@ -113,6 +113,14 @@ public class 红黑树<E> extends 二叉平衡树<E>  {
             return str + element.toString();
         }
 
+    }
+
+
+    @Override
+    public Object string(Object node) {
+        String str = ((RBNode<E>)node).parent != null ? ((RBNode<E>)node).parent.element.toString() :"null";
+
+        return ((RBNode<E>)node).element+"_"+"P("+str+")"+"_"+"C("+ ((RBNode<E>)node).color+")";
     }
 
 }
